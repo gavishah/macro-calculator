@@ -23,7 +23,6 @@ const MICRO_KEYS = Object.keys(MICRO_LABELS);
 const FORMULAS = [
   { id:"mifflin", name:"Mifflin-St Jeor", badge:"Recommended", who:"Best for most people", detail:"Most clinically validated. Uses age, weight, height & sex.", needsBF:false },
   { id:"katch", name:"Katch-McArdle", badge:"Athletes", who:"Know your body fat %?", detail:"Uses lean body mass — more accurate for muscular individuals.", needsBF:true },
-  { id:"harris", name:"Harris-Benedict", badge:"Legacy", who:"Older reference formula", detail:"Developed 1919, revised 1984. Included for reference — Mifflin is more accurate for most people.", needsBF:false },
 ];
 const ACT = [
   { v:1.2, label:"Sedentary", desc:"Little/no exercise" },
@@ -60,7 +59,6 @@ const LS_KEY = "macro-calc-v1";
 
 function calcBMR(formula, sex, wKg, hCm, age, bf) {
   if (formula === "mifflin") return sex === "male" ? 10*wKg + 6.25*hCm - 5*age + 5 : 10*wKg + 6.25*hCm - 5*age - 161;
-  if (formula === "harris")  return sex === "male" ? 88.362 + 13.397*wKg + 4.799*hCm - 5.677*age : 447.593 + 9.247*wKg + 3.098*hCm - 4.33*age;
   return 370 + 21.6 * (wKg * (1 - bf / 100));
 }
 
@@ -167,7 +165,7 @@ export default function App() {
       if (saved.hCm      !== undefined) setHCm(saved.hCm);
       if (saved.sex      !== undefined) setSex(saved.sex);
       if (saved.unit     !== undefined) setUnit(saved.unit);
-      if (saved.formula  !== undefined) setFormula(saved.formula);
+      if (saved.formula  !== undefined && saved.formula !== "harris") setFormula(saved.formula);
       if (saved.activity !== undefined) setActivity(saved.activity);
       if (saved.goal     !== undefined) setGoal(saved.goal);
       if (saved.prot     !== undefined) setProt(saved.prot);

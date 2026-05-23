@@ -179,17 +179,18 @@ input[type="range"]::-webkit-slider-thumb {
 @media (min-width: 1024px) {
   .app-layout {
     display: grid;
-    grid-template-columns: 380px 1fr;
+    grid-template-columns: 360px 1fr;
     gap: 40px;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 60px 24px;
+    padding: 20px 24px 60px;
     align-items: start;
   }
   .app-left {
     position: sticky;
-    top: 60px;
-    max-height: calc(100vh - 120px);
+    top: 24px;
+    align-self: start;
+    max-height: calc(100vh - 48px);
     overflow-y: auto;
     padding-right: 12px;
   }

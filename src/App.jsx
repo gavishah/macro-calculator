@@ -418,7 +418,7 @@ export default function App() {
   return (
     <div style={{ minHeight: "100vh", background: BG, fontFamily: HEADER_FONT, color: TXT, WebkitFontSmoothing: "antialiased", MozOsxFontSmoothing: "grayscale" }}>
 
-      <header style={{ maxWidth: 1200, margin: "0 auto", padding: "40px 32px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
+      <header style={{ width: "100%", maxWidth: 1200, margin: "0 auto", padding: "40px 32px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
           <div style={{ width: 48, height: 48, borderRadius: 12, background: ACC, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 24, color: WHITE }}>M</div>
           <div>

@@ -266,14 +266,14 @@ export default function App() {
   };
 
   const cardStyle = { background: CARD, borderRadius: 22, padding: "24px 20px", marginBottom: 18, ...neuUp };
-  const inputStyle = { width: "100%", padding: "14px 16px", borderRadius: 14, border: "none", background: CARD, color: TXT, fontSize: 15, fontFamily: "inherit", outline: "none", boxSizing: "border-box", fontWeight: 600, ...neuDn };
+  const inputStyle = { width: "100%", padding: "13px 16px", minHeight: 44, borderRadius: 14, border: "none", background: CARD, color: TXT, fontSize: 16, fontFamily: "inherit", outline: "none", boxSizing: "border-box", fontWeight: 600, WebkitAppearance: "none", appearance: "none", ...neuDn };
   const labelStyle = { display: "block", fontSize: 11, fontWeight: 800, color: MUTE, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 };
 
   return (
-    <div style={{ minHeight: "100vh", background: BG, fontFamily: "'DM Sans','Nunito Sans',system-ui,sans-serif", color: TXT, WebkitFontSmoothing: "antialiased" }}>
+    <div style={{ minHeight: "100vh", background: BG, fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif", color: TXT, WebkitFontSmoothing: "antialiased", MozOsxFontSmoothing: "grayscale" }}>
 
       {/* HEADER */}
-      <header style={{ maxWidth: 700, margin: "0 auto", padding: "32px 20px 8px", display: "flex", alignItems: "center", gap: 14 }}>
+      <header className="app-header">
         <div style={{ width: 48, height: 48, borderRadius: 16, background: CARD, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 24, color: ACC, ...neuUp }}>M</div>
         <div>
           <h1 style={{ margin: 0, fontSize: 22, fontWeight: 900, letterSpacing: "-0.5px" }}>Macro Calculator</h1>
@@ -281,7 +281,7 @@ export default function App() {
         </div>
       </header>
 
-      <div style={{ maxWidth: 700, margin: "0 auto", padding: "20px 16px 60px" }}>
+      <div className="app-body">
 
         {/* ── 1. FORMULA ── */}
         <div style={cardStyle}>
@@ -314,7 +314,7 @@ export default function App() {
           {needsBF && <R l="Body Fat %"><input type="number" value={bf} onChange={e=>setBf(e.target.value)} placeholder="e.g. 15" style={inputStyle} /></R>}
           <R l="Activity Level">
             {ACT.map(a => (
-              <button key={a.v} onClick={()=>setActivity(a.v)} style={{ display:"flex", gap:10, alignItems:"center", padding:"12px 14px", borderRadius:14, border:"none", background:CARD, cursor:"pointer", textAlign:"left", fontFamily:"inherit", width:"100%", marginBottom:8, ...(activity===a.v?{...neuDn,outline:"2px solid "+ACC}:neuSm) }}>
+              <button key={a.v} onClick={()=>setActivity(a.v)} style={{ display:"flex", gap:10, alignItems:"center", padding:"12px 14px", minHeight:44, borderRadius:14, border:"none", background:CARD, cursor:"pointer", textAlign:"left", fontFamily:"inherit", width:"100%", marginBottom:8, ...(activity===a.v?{...neuDn,outline:"2px solid "+ACC}:neuSm) }}>
                 <div style={{ width:8, height:8, borderRadius:"50%", background:activity===a.v?ACC:"#ccc", flexShrink:0 }} />
                 <div><div style={{fontSize:14,fontWeight:700}}>{a.label}</div><div style={{fontSize:12,color:MUTE}}>{a.desc}</div></div>
               </button>
@@ -323,7 +323,7 @@ export default function App() {
           <R l="Goal">
             <div style={{display:"flex",gap:8}}>
               {GOALS.map(g => (
-                <button key={g.id} onClick={()=>setGoal(g.id)} style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", gap:3, padding:"14px 6px", borderRadius:14, border:"none", background:CARD, cursor:"pointer", fontFamily:"inherit", ...(goal===g.id?{...neuDn,outline:"2px solid "+ACC}:neuSm) }}>
+                <button key={g.id} onClick={()=>setGoal(g.id)} style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", gap:3, padding:"14px 6px", minHeight:44, borderRadius:14, border:"none", background:CARD, cursor:"pointer", fontFamily:"inherit", ...(goal===g.id?{...neuDn,outline:"2px solid "+ACC}:neuSm) }}>
                   <span style={{fontSize:13,fontWeight:700,color:goal===g.id?ACC:MUTE}}>{g.label}</span>
                   <span style={{fontSize:11,color:MUTE}}>{g.offset>0?"+":""}{g.offset} cal</span>
                 </button>
@@ -403,21 +403,21 @@ export default function App() {
             {foodSearch.length > 0 && (
               <button
                 onClick={() => setFoodSearch("")}
-                style={{ position:"absolute", right:12, top:"50%", transform:"translateY(-50%)", background:"none", border:"none", cursor:"pointer", color:MUTE, fontSize:18, lineHeight:1, padding:2 }}
+                style={{ position:"absolute", right:8, top:"50%", transform:"translateY(-50%)", background:"none", border:"none", cursor:"pointer", color:MUTE, fontSize:18, lineHeight:1, padding:"8px", minWidth:44, minHeight:44, display:"flex", alignItems:"center", justifyContent:"center" }}
               >×</button>
             )}
           </div>
 
           {/* ── Category tabs (horizontal scroll) ── */}
           {!showSearch && (
-            <div style={{ overflowX:"auto", marginBottom:18, paddingBottom:4, scrollbarWidth:"none", msOverflowStyle:"none" }}>
+            <div className="tabs-scroll">
               <div style={{ display:"flex", gap:6, width:"max-content" }}>
                 {CATEGORIES.map(cat => (
                   <button
                     key={cat.id}
                     onClick={() => { setFoodTab(cat.id); setFoodSearch(""); }}
                     style={{
-                      padding:"9px 14px", borderRadius:20, border:"none", fontSize:12, fontWeight:700,
+                      padding:"10px 14px", minHeight:44, borderRadius:20, border:"none", fontSize:13, fontWeight:700,
                       cursor:"pointer", fontFamily:"inherit", whiteSpace:"nowrap", background:CARD, color:foodTab===cat.id?ACC:MUTE,
                       transition:"all 0.2s", ...(foodTab===cat.id ? {...neuDn, outline:"2px solid "+ACC} : neuSm)
                     }}
@@ -472,7 +472,7 @@ export default function App() {
                   {selected && (
                     <div style={{ marginTop: 12, display: "flex", alignItems: "center", gap: 10 }}>
                       <span style={{ fontSize: 12, fontWeight: 700, color: MUTE, flexShrink: 0 }}>Grams:</span>
-                      <input type="number" value={g} onChange={e => setGrams(food.id, e.target.value)} style={{ ...inputStyle, width: 90, padding: "10px 12px", fontSize: 14, textAlign: "center" }} />
+                      <input type="number" value={g} onChange={e => setGrams(food.id, e.target.value)} style={{ ...inputStyle, width: 90, padding: "10px 12px", fontSize: 16, textAlign: "center" }} />
                       <div style={{ fontSize: 12, color: MUTE, flexWrap: "wrap", display: "flex", gap: 8 }}>
                         <span><b style={{color:TXT}}>{Math.round(food.per100.cal*g/100)}</b> cal</span>
                         <span><b style={{color:TXT}}>{Math.round(food.per100.protein*g/100*10)/10}g</b> P</span>
@@ -556,7 +556,7 @@ export default function App() {
               );
             })}
 
-            <button onClick={() => setMeal({})} style={{ width: "100%", padding: "14px", borderRadius: 14, border: "none", background: CARD, color: MUTE, fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", marginTop: 10, ...neuSm }}>
+            <button onClick={() => setMeal({})} style={{ width: "100%", padding: "14px", minHeight: 44, borderRadius: 14, border: "none", background: CARD, color: MUTE, fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", marginTop: 10, ...neuSm }}>
               Clear Meal
             </button>
           </div>
@@ -584,7 +584,7 @@ function Tog({ opts, v, s }) {
   return (
     <div style={{ display: "flex", borderRadius: 14, padding: 3, background: CARD, ...neuDn }}>
       {opts.map(o => (
-        <button key={o.id} onClick={() => s(o.id)} style={{ flex: 1, padding: "10px 8px", borderRadius: 11, border: "none", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", transition: "all 0.2s", background: v===o.id ? CARD : "transparent", color: v===o.id ? ACC : MUTE, ...(v===o.id ? neuSm : {}) }}>{o.l}</button>
+        <button key={o.id} onClick={() => s(o.id)} style={{ flex: 1, padding: "10px 8px", minHeight: 44, borderRadius: 11, border: "none", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", transition: "all 0.2s", background: v===o.id ? CARD : "transparent", color: v===o.id ? ACC : MUTE, ...(v===o.id ? neuSm : {}) }}>{o.l}</button>
       ))}
     </div>
   );

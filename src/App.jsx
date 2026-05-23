@@ -142,6 +142,7 @@ export default function App() {
   const [foodsData, setFoodsData] = useState(null);
   const [foodsLoading, setFoodsLoading] = useState(true);
   const [foodSearch, setFoodSearch] = useState("");
+  const [sortBy, setSortBy] = useState("popular_desc");
 
   /* ── localStorage: restore on mount ── */
   useEffect(() => {
@@ -170,6 +171,18 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem(LS_KEY, JSON.stringify({ age, weight, hFt, hIn, hCm, sex, unit, formula, activity, goal, prot, carb, fatP, diet, mealUnits }));
   }, [age, weight, hFt, hIn, hCm, sex, unit, formula, activity, goal, prot, carb, fatP, diet, mealUnits]);
+
+  // Track food usage counts
+  const getFoodUsage = () => {
+    try { return JSON.parse(localStorage.getItem("foodUsageCount") || "{}"); }
+    catch { return {}; }
+  };
+
+  const incrementFoodUsage = (id) => {
+    const usage = getFoodUsage();
+    usage[id] = (usage[id] || 0) + 1;
+    localStorage.setItem("foodUsageCount", JSON.stringify(usage));
+  };
 
   /* ── Fetch foods.json on mount ── */
   useEffect(() => {
@@ -202,12 +215,40 @@ export default function App() {
 
   /* ── Step 2: macro filter + sort ── */
   const macroFiltered = useMemo(() => {
-    if (macroFilter === "any") return [...dietFiltered].sort((a, b) => a.name.localeCompare(b.name));
-    const min = macroFilter === "carbs" ? 5 : 2;
-    return [...dietFiltered]
-      .filter(f => (f.per100[macroFilter] || 0) >= min)
-      .sort((a, b) => (b.per100[macroFilter] || 0) - (a.per100[macroFilter] || 0));
-  }, [dietFiltered, macroFilter]);
+    const usage = getFoodUsage();
+    let list = [...dietFiltered];
+
+    // Macro filter
+    if (macroFilter !== "any") {
+      const min = macroFilter === "carbs" ? 5 : 2;
+      list = list.filter(f => (f.per100[macroFilter] || 0) >= min);
+    }
+
+    // Sort
+    const favThreshold = 3;
+
+    if (sortBy === "popular_desc") {
+      list.sort((a, b) => {
+        const aFav = (usage[a.id] || 0) >= favThreshold;
+        const bFav = (usage[b.id] || 0) >= favThreshold;
+        if (aFav && !bFav) return -1;
+        if (!aFav && bFav) return 1;
+        return (b.popularity || 50) - (a.popularity || 50);
+      });
+    } else if (sortBy === "popular_asc") {
+      list.sort((a, b) => (a.popularity || 50) - (b.popularity || 50));
+    } else if (sortBy === "az") {
+      list.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (sortBy === "za") {
+      list.sort((a, b) => b.name.localeCompare(a.name));
+    } else if (sortBy === "macro_high" && macroFilter !== "any") {
+      list.sort((a, b) => (b.per100[macroFilter] || 0) - (a.per100[macroFilter] || 0));
+    } else if (sortBy === "macro_low" && macroFilter !== "any") {
+      list.sort((a, b) => (a.per100[macroFilter] || 0) - (b.per100[macroFilter] || 0));
+    }
+
+    return list;
+  }, [dietFiltered, macroFilter, sortBy]);
 
   /* ── Step 3: available category chips (in CATEGORIES order) ── */
   const availableCats = useMemo(() => {
@@ -237,13 +278,27 @@ export default function App() {
 
   /* ── Group by category for display ── */
   const groupedFoods = useMemo(() => {
+    const usage = getFoodUsage();
+    const favThreshold = 3;
     const groups = new Map();
+
+    // Separate favourites when sorting by popular_desc
+    if (sortBy === "popular_desc") {
+      const favs = displayFoods.filter(f => (usage[f.id] || 0) >= favThreshold);
+      if (favs.length > 0) {
+        groups.set("__favs__", { label: "Your Favourites", foods: favs, isFavs: true });
+      }
+    }
+
     displayFoods.forEach(f => {
-      if (!groups.has(f.catKey)) groups.set(f.catKey, { label: f.catLabel, foods: [] });
+      // Skip favs — already shown above
+      if (sortBy === "popular_desc" && (usage[f.id] || 0) >= favThreshold) return;
+      if (!groups.has(f.catKey)) groups.set(f.catKey, { label: f.catLabel, foods: [], isFavs: false });
       groups.get(f.catKey).foods.push(f);
     });
+
     return [...groups.values()];
-  }, [displayFoods]);
+  }, [displayFoods, sortBy]);
 
   const needsBF = FORMULAS.find(f => f.id === formula).needsBF;
 
@@ -326,6 +381,7 @@ export default function App() {
       } else {
         // Default quantity = 1, default unit = first serving if available, else "grams"
         next[id] = 1;
+        incrementFoodUsage(id);
         const defaultUnit = food.servings && food.servings.length > 0 
           ? food.servings[0].unit 
           : "grams";
@@ -517,6 +573,46 @@ export default function App() {
             </div>
           )}
 
+          {/* Sort controls */}
+          <div style={{ marginBottom: 14 }}>
+            <span style={labelStyle}>Sort By</span>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <select
+                value={sortBy}
+                onChange={e => setSortBy(e.target.value)}
+                style={{
+                  flex: 1,
+                  padding: "12px 8px",
+                  minHeight: 44,
+                  borderRadius: 0,
+                  border: "none",
+                  borderBottom: "2px solid #1a1a1a",
+                  background: "transparent",
+                  color: TXT,
+                  fontSize: 13,
+                  fontFamily: "inherit",
+                  fontWeight: 600,
+                  outline: "none",
+                  cursor: "pointer",
+                  appearance: "none",
+                  WebkitAppearance: "none"
+                }}
+              >
+                <option value="popular_desc">Most Popular</option>
+                <option value="popular_asc">Least Popular</option>
+                <option value="az">A → Z</option>
+                <option value="za">Z → A</option>
+                {macroFilter !== "any" && (
+                  <>
+                    <option value="macro_high">Highest {macroFilter.charAt(0).toUpperCase() + macroFilter.slice(1)}</option>
+                    <option value="macro_low">Lowest {macroFilter.charAt(0).toUpperCase() + macroFilter.slice(1)}</option>
+                  </>
+                )}
+              </select>
+              <span style={{ color: MUTE, fontSize: 18, pointerEvents: "none" }}>↕</span>
+            </div>
+          </div>
+
           {/* Search bar */}
           <div style={{marginBottom:12,position:"relative"}}>
             <input
@@ -560,7 +656,20 @@ export default function App() {
           {/* Food list grouped by category */}
           {!foodsLoading && groupedFoods.map(group => (
             <div key={group.label}>
-              <div style={{ fontSize:11, fontWeight:700, color:MUTE, letterSpacing:"2px", textTransform:"uppercase", margin:"20px 0 10px", paddingBottom:6, borderBottom:"1px solid #e0e0dc" }}>
+              <div style={{
+                fontSize: 11,
+                fontWeight: 700,
+                color: group.isFavs ? ACC : MUTE,
+                letterSpacing: "2px",
+                textTransform: "uppercase",
+                margin: "20px 0 10px",
+                paddingBottom: 6,
+                borderBottom: `1px solid ${group.isFavs ? ACC : "#e0e0dc"}`,
+                display: "flex",
+                alignItems: "center",
+                gap: 6
+              }}>
+                {group.isFavs && <span>★</span>}
                 {group.label}
               </div>
               {group.foods.map(food => {

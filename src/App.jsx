@@ -104,15 +104,16 @@ function AN({ value, cursor = false }) {
    STYLES — light, clean, soft neumorphic
 ═══════════════════════════════════════════ */
 const BG = "#F4F4F0";
-const CARD = "#F4F4F0";
-const TXT = "#1a1a1a";
-const MUTE = "#888880";
-const ACC = "#1a1a1a";
-const WHITE = "#ffffff";
-const NUM_FONT = "'DM Sans', system-ui, -apple-system, sans-serif";
-const neuUp = { boxShadow: "6px 6px 12px #d4d4d0, -6px -6px 12px #ffffff" };
-const neuDn = { boxShadow: "inset 4px 4px 8px #d4d4d0, inset -4px -4px 8px #ffffff" };
-const neuSm = { boxShadow: "3px 3px 6px #d4d4d0, -3px -3px 6px #ffffff" };
+const CARD = "#FFFFFF";
+const TXT = "#111827";
+const MUTE = "#6B7280";
+const ACC = "#111827";
+const WHITE = "#FFFFFF";
+const NUM_FONT = "'IBM Plex Mono', 'JetBrains Mono', monospace";
+const HEADER_FONT = "'Space Grotesk', 'Inter', system-ui, sans-serif";
+const PROT_COLOR = "#EF4444";
+const CARB_COLOR = "#F59E0B";
+const FAT_COLOR = "#3B82F6";
 
 /* ═══════════════════════════════════════════
    MAIN APP
@@ -407,16 +408,16 @@ export default function App() {
     return { pct, w };
   };
 
-  const cardStyle = { background: CARD, borderRadius: 22, padding: "24px 20px", marginBottom: 18, ...neuUp };
-  const inputStyle = { width: "100%", padding: "13px 4px", minHeight: 44, borderRadius: 0, border: "none", borderBottom: "2px solid #1a1a1a", background: "transparent", color: TXT, fontSize: 16, fontFamily: "inherit", outline: "none", boxSizing: "border-box", fontWeight: 600, WebkitAppearance: "none", appearance: "none" };
-  const labelStyle = { display: "block", fontSize: 11, fontWeight: 700, color: MUTE, letterSpacing: "2px", textTransform: "uppercase", marginBottom: 8 };
+  const cardStyle = { background: CARD, border: "2px solid " + TXT, borderRadius: 0, padding: "24px 20px", marginBottom: 18 };
+  const inputStyle = { width: "100%", padding: "13px 12px", minHeight: 44, borderRadius: 0, border: "2px solid " + TXT, background: "transparent", color: TXT, fontSize: 16, fontFamily: NUM_FONT, outline: "none", boxSizing: "border-box", fontWeight: 500, WebkitAppearance: "none", appearance: "none" };
+  const labelStyle = { display: "block", fontSize: 11, fontWeight: 700, color: MUTE, letterSpacing: "2px", textTransform: "uppercase", marginBottom: 8, fontFamily: HEADER_FONT };
 
   return (
-    <div style={{ minHeight: "100vh", background: BG, fontFamily: "'Courier Prime', 'Courier New', monospace", color: TXT, WebkitFontSmoothing: "antialiased", MozOsxFontSmoothing: "grayscale" }}>
+    <div style={{ minHeight: "100vh", background: BG, fontFamily: HEADER_FONT, color: TXT, WebkitFontSmoothing: "antialiased", MozOsxFontSmoothing: "grayscale" }}>
 
       {/* HEADER */}
       <header className="app-header">
-        <div style={{ width: 48, height: 48, borderRadius: 16, background: CARD, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 24, color: ACC, ...neuUp }}>M</div>
+        <div style={{ width: 48, height: 48, borderRadius: 0, background: CARD, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 24, color: ACC, border: "2px solid " + TXT, boxShadow: "4px 4px 0px 0px " + TXT }}>M</div>
         <div>
           <h1 className="typewriter-title" style={{ margin: 0, fontSize: 22, fontWeight: 700 }}>Macro Calculator</h1>
           <p style={{ margin: 0, fontSize: 12, color: MUTE }}>Free · No login · No tracking · No ads</p>
@@ -429,14 +430,33 @@ export default function App() {
         <div style={cardStyle}>
           <SH n="1" t="Choose Your Formula" />
           {FORMULAS.map(f => (
-            <button key={f.id} onClick={() => setFormula(f.id)} style={{ display: "block", width: "100%", position: "relative", borderRadius: 16, padding: 16, textAlign: "left", cursor: "pointer", border: "none", fontFamily: "inherit", marginBottom: 10, background: formula===f.id ? ACC : CARD, color: formula===f.id ? WHITE : TXT, transition: "all 0.15s ease", ...(formula===f.id ? {boxShadow:"none"} : neuSm) }}>
+            <button
+              key={f.id}
+              onClick={() => setFormula(f.id)}
+              style={{
+                display: "block",
+                width: "100%",
+                position: "relative",
+                borderRadius: 0,
+                padding: 16,
+                textAlign: "left",
+                cursor: "pointer",
+                border: "2px solid " + TXT,
+                fontFamily: "inherit",
+                marginBottom: 10,
+                background: formula === f.id ? ACC : CARD,
+                color: formula === f.id ? WHITE : TXT,
+                transition: "all 0.1s ease",
+                boxShadow: formula === f.id ? "none" : "4px 4px 0px 0px " + TXT
+              }}
+            >
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
                 <span style={{ fontSize: 15, fontWeight: 800 }}>{f.name}</span>
-                <span style={{ fontSize: 10, fontWeight: 800, padding: "3px 8px", borderRadius: 20, background: formula===f.id ? WHITE : "#ddd", color: formula===f.id ? ACC : MUTE }}>{f.badge}</span>
+                <span style={{ fontSize: 10, fontWeight: 800, padding: "3px 8px", borderRadius: 0, background: formula === f.id ? WHITE : "#ddd", color: formula === f.id ? ACC : MUTE, border: formula === f.id ? "none" : "1px solid " + MUTE }}>{f.badge}</span>
               </div>
               <p style={{ margin: "0 0 2px", fontSize: 13, fontWeight: 600, color: formula===f.id ? "rgba(255,255,255,0.65)" : MUTE }}>{f.who}</p>
               <p style={{ margin: 0, fontSize: 12, color: formula===f.id ? "rgba(255,255,255,0.5)" : MUTE }}>{f.detail}</p>
-              {formula===f.id && <div style={{ position: "absolute", top: 14, right: 14, width: 24, height: 24, borderRadius: "50%", background: WHITE, color: ACC, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 12 }}>✓</div>}
+              {formula === f.id && <div style={{ position: "absolute", top: 14, right: 14, width: 24, height: 24, borderRadius: 0, background: WHITE, color: ACC, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 12 }}>✓</div>}
             </button>
           ))}
         </div>
@@ -456,27 +476,68 @@ export default function App() {
           {needsBF && <R l="Body Fat %"><input type="number" value={bf} onChange={e=>setBf(e.target.value)} placeholder="e.g. 15" style={inputStyle} /></R>}
           <R l="Activity Level">
             {ACT.map(a => (
-              <button key={a.v} onClick={()=>setActivity(a.v)} style={{ display:"flex", gap:10, alignItems:"center", padding:"12px 14px", minHeight:44, borderRadius:14, border:"none", background:activity===a.v?ACC:CARD, color:activity===a.v?WHITE:TXT, cursor:"pointer", textAlign:"left", fontFamily:"inherit", width:"100%", marginBottom:8, transition:"all 0.15s ease", ...(activity===a.v?{boxShadow:"none"}:neuSm) }}>
-                <div style={{ width:8, height:8, borderRadius:"50%", background:activity===a.v?WHITE:"#ccc", flexShrink:0 }} />
-                <div><div style={{fontSize:14,fontWeight:700}}>{a.label}</div><div style={{fontSize:12,color:activity===a.v?"rgba(255,255,255,0.65)":MUTE}}>{a.desc}</div></div>
+              <button
+                key={a.v}
+                onClick={() => setActivity(a.v)}
+                style={{
+                  display: "flex",
+                  gap: 10,
+                  alignItems: "center",
+                  padding: "12px 14px",
+                  minHeight: 44,
+                  borderRadius: 0,
+                  border: "2px solid " + TXT,
+                  background: activity === a.v ? ACC : CARD,
+                  color: activity === a.v ? WHITE : TXT,
+                  cursor: "pointer",
+                  textAlign: "left",
+                  fontFamily: "inherit",
+                  width: "100%",
+                  marginBottom: 8,
+                  transition: "all 0.1s ease",
+                  boxShadow: activity === a.v ? "none" : "3px 3px 0px 0px " + TXT
+                }}
+              >
+                <div style={{ width: 8, height: 8, borderRadius: 0, background: activity === a.v ? WHITE : MUTE, flexShrink: 0 }} />
+                <div><div style={{ fontSize: 14, fontWeight: 700 }}>{a.label}</div><div style={{ fontSize: 12, color: activity === a.v ? "rgba(255,255,255,0.65)" : MUTE }}>{a.desc}</div></div>
               </button>
             ))}
           </R>
           <R l="Goal">
-            <div style={{display:"flex",gap:8}}>
+            <div style={{ display: "flex", gap: 8 }}>
               {GOALS.map(g => (
-                <button key={g.id} onClick={()=>setGoal(g.id)} style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", gap:3, padding:"14px 6px", minHeight:44, borderRadius:14, border:"none", background:goal===g.id?ACC:CARD, cursor:"pointer", fontFamily:"inherit", transition:"all 0.15s ease", ...(goal===g.id?{boxShadow:"none"}:neuSm) }}>
-                  <span style={{fontSize:13,fontWeight:700,color:goal===g.id?WHITE:MUTE}}>{g.label}</span>
-                  <span style={{fontSize:11,color:goal===g.id?"rgba(255,255,255,0.65)":MUTE}}>{g.offset>0?"+":""}{g.offset} cal</span>
+                <button
+                  key={g.id}
+                  onClick={() => setGoal(g.id)}
+                  style={{
+                    flex: 1,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    gap: 3,
+                    padding: "14px 6px",
+                    minHeight: 44,
+                    borderRadius: 0,
+                    border: "2px solid " + TXT,
+                    background: goal === g.id ? ACC : CARD,
+                    color: goal === g.id ? WHITE : TXT,
+                    cursor: "pointer",
+                    fontFamily: "inherit",
+                    transition: "all 0.1s ease",
+                    boxShadow: goal === g.id ? "none" : "3px 3px 0px 0px " + TXT
+                  }}
+                >
+                  <span style={{ fontSize: 13, fontWeight: 700, color: goal === g.id ? WHITE : TXT }}>{g.label}</span>
+                  <span style={{ fontSize: 11, color: goal === g.id ? "rgba(255,255,255,0.65)" : MUTE }}>{g.offset > 0 ? "+" : ""}{g.offset} cal</span>
                 </button>
               ))}
             </div>
           </R>
           <R l="Macro Split">
-            {[{k:"p",l:"Protein",v:prot},{k:"c",l:"Carbs",v:carb},{k:"f",l:"Fat",v:fatP}].map(m => (
+            {[{k:"p",l:"Protein",v:prot,c:PROT_COLOR},{k:"c",l:"Carbs",v:carb,c:CARB_COLOR},{k:"f",l:"Fat",v:fatP,c:FAT_COLOR}].map(m => (
               <div key={m.k} style={{marginBottom:14}}>
-                <div style={{display:"flex",justifyContent:"space-between",fontSize:13,fontWeight:700,color:MUTE,marginBottom:6}}><span>{m.l}</span><span style={{color:ACC,fontWeight:800}}>{m.v}%</span></div>
-                <input type="range" min={5} max={90} value={m.v} onChange={e=>sl(m.k,parseInt(e.target.value))} style={{width:"100%",accentColor:ACC,cursor:"pointer"}} />
+                <div style={{display:"flex",justifyContent:"space-between",fontSize:13,fontWeight:700,color:MUTE,marginBottom:6}}><span>{m.l}</span><span style={{color:m.c,fontWeight:800}}>{m.v}%</span></div>
+                <input type="range" min={5} max={90} value={m.v} onChange={e=>sl(m.k,parseInt(e.target.value))} style={{width:"100%",accentColor:m.c,cursor:"pointer"}} />
               </div>
             ))}
             {(() => {
@@ -486,9 +547,9 @@ export default function App() {
               const fB = Math.max(0, B - pB - cB);
               return (
                 <div style={{ fontSize: 16, letterSpacing: "1px", lineHeight: 1, marginTop: 4, userSelect: "none" }}>
-                  <span style={{ color: TXT }}>{"█".repeat(pB)}</span>
-                  <span style={{ color: MUTE }}>{"█".repeat(cB)}</span>
-                  <span style={{ color: "#c8c8c4" }}>{"█".repeat(fB)}</span>
+                  <span style={{ color: PROT_COLOR }}>{"█".repeat(pB)}</span>
+                  <span style={{ color: CARB_COLOR }}>{"█".repeat(cB)}</span>
+                  <span style={{ color: FAT_COLOR }}>{"█".repeat(fB)}</span>
                 </div>
               );
             })()}
@@ -505,27 +566,57 @@ export default function App() {
             </div>
           ) : (
             <>
-              <div style={{borderRadius:18,padding:"28px 20px",textAlign:"center",marginBottom:14,background:ACC,color:WHITE,...neuUp}}>
-                <span style={{display:"block",fontSize:11,fontWeight:700,opacity:0.7,letterSpacing:"2px",textTransform:"uppercase",marginBottom:4}}>Daily Target</span>
-                <span style={{display:"block",fontSize:54,fontWeight:900,letterSpacing:"-2px",lineHeight:1.05}}><AN value={r.target} cursor /></span>
-                <span style={{display:"block",fontSize:13,opacity:0.6,marginTop:4}}>kcal / day</span>
+              <div
+                style={{
+                  borderRadius: 0,
+                  padding: "28px 20px",
+                  textAlign: "center",
+                  marginBottom: 14,
+                  background: ACC,
+                  color: WHITE,
+                  border: "2px solid " + TXT
+                }}
+              >
+                <span style={{ display: "block", fontSize: 11, fontWeight: 700, opacity: 0.7, letterSpacing: "2px", textTransform: "uppercase", marginBottom: 4 }}>Daily Target</span>
+                <span style={{ display: "block", fontSize: 54, fontWeight: 900, letterSpacing: "-2px", lineHeight: 1.05 }}><AN value={r.target} cursor /></span>
+                <span style={{ display: "block", fontSize: 13, opacity: 0.6, marginTop: 4 }}>kcal / day</span>
               </div>
-              <div style={{display:"flex",gap:10,marginBottom:20}}>
-                {[{l:"BMR",v:r.bmr,t:"At rest"},{l:"TDEE",v:r.tdee,t:"With activity"}].map(c => (
-                  <div key={c.l} style={{flex:1,borderRadius:16,padding:"16px 12px",textAlign:"center",...neuDn}}>
-                    <span style={{display:"block",fontSize:10,fontWeight:700,color:MUTE,letterSpacing:"2px",textTransform:"uppercase",marginBottom:4}}>{c.l}</span>
-                    <span style={{display:"block",fontSize:26,fontWeight:900,letterSpacing:"-1px"}}><AN value={c.v} /></span>
-                    <span style={{display:"block",fontSize:11,color:MUTE,marginTop:3}}>{c.t}</span>
+              <div style={{ display: "flex", gap: 10, marginBottom: 20 }}>
+                {[{ l: "BMR", v: r.bmr, t: "At rest" }, { l: "TDEE", v: r.tdee, t: "With activity" }].map(c => (
+                  <div
+                    key={c.l}
+                    style={{
+                      flex: 1,
+                      borderRadius: 0,
+                      padding: "16px 12px",
+                      textAlign: "center",
+                      border: "2px solid " + TXT,
+                      background: CARD
+                    }}
+                  >
+                    <span style={{ display: "block", fontSize: 10, fontWeight: 700, color: MUTE, letterSpacing: "2px", textTransform: "uppercase", marginBottom: 4 }}>{c.l}</span>
+                    <span style={{ display: "block", fontSize: 26, fontWeight: 900, letterSpacing: "-1px" }}><AN value={c.v} /></span>
+                    <span style={{ display: "block", fontSize: 11, color: MUTE, marginTop: 3 }}>{c.t}</span>
                   </div>
                 ))}
               </div>
-              <div style={{display:"flex",gap:8}}>
-                {[{l:"Protein",g:r.pG,p:prot,c:"#555"},{l:"Carbs",g:r.cG,p:carb,c:"#999"},{l:"Fat",g:r.fG,p:fatP,c:"#ccc"}].map(m => (
-                  <div key={m.l} style={{flex:1,borderRadius:16,padding:"14px 8px",textAlign:"center",...neuDn}}>
-                    <div style={{width:8,height:8,borderRadius:"50%",background:m.c,margin:"0 auto 6px"}} />
-                    <span style={{display:"block",fontSize:11,fontWeight:700,color:MUTE}}>{m.l}</span>
-                    <span style={{display:"block",fontSize:24,fontWeight:900,letterSpacing:"-0.8px",lineHeight:1.1}}><AN value={m.g} />g</span>
-                    <span style={{display:"block",fontSize:10,color:MUTE}}>{m.p}%</span>
+              <div style={{ display: "flex", gap: 8 }}>
+                {[{ l: "Protein", g: r.pG, p: prot, c: PROT_COLOR }, { l: "Carbs", g: r.cG, p: carb, c: CARB_COLOR }, { l: "Fat", g: r.fG, p: fatP, c: FAT_COLOR }].map(m => (
+                  <div
+                    key={m.l}
+                    style={{
+                      flex: 1,
+                      borderRadius: 0,
+                      padding: "14px 8px",
+                      textAlign: "center",
+                      border: "2px solid " + TXT,
+                      background: CARD
+                    }}
+                  >
+                    <div style={{ width: 8, height: 8, borderRadius: 0, background: m.c, margin: "0 auto 6px" }} />
+                    <span style={{ display: "block", fontSize: 11, fontWeight: 700, color: MUTE }}>{m.l}</span>
+                    <span style={{ display: "block", fontSize: 24, fontWeight: 900, letterSpacing: "-0.8px", lineHeight: 1.1 }}><AN value={m.g} />g</span>
+                    <span style={{ display: "block", fontSize: 10, color: MUTE }}>{m.p}%</span>
                   </div>
                 ))}
               </div>
@@ -559,14 +650,23 @@ export default function App() {
                       key={cat.id}
                       onClick={() => setSelectedCat(selectedCat === cat.id ? null : cat.id)}
                       style={{
-                        padding:"10px 14px", minHeight:44, borderRadius:20, border:"none", fontSize:13, fontWeight:700,
-                        cursor:"pointer", fontFamily:"inherit", whiteSpace:"nowrap",
+                        padding: "10px 14px",
+                        minHeight: 44,
+                        borderRadius: 0,
+                        border: "2px solid " + TXT,
+                        fontSize: 13,
+                        fontWeight: 700,
+                        cursor: "pointer",
+                        fontFamily: HEADER_FONT,
+                        whiteSpace: "nowrap",
                         background: selectedCat === cat.id ? ACC : CARD,
-                        color: selectedCat === cat.id ? WHITE : MUTE,
-                        transition:"all 0.15s ease",
-                        ...(selectedCat === cat.id ? {boxShadow:"none"} : neuSm)
+                        color: selectedCat === cat.id ? WHITE : TXT,
+                        transition: "all 0.1s ease",
+                        boxShadow: selectedCat === cat.id ? "none" : "3px 3px 0px 0px " + TXT
                       }}
-                    >{cat.label}</button>
+                    >
+                      {cat.label}
+                    </button>
                   ))}
                 </div>
               </div>
@@ -581,21 +681,20 @@ export default function App() {
                 value={sortBy}
                 onChange={e => setSortBy(e.target.value)}
                 style={{
-                  flex: 1,
                   padding: "12px 8px",
                   minHeight: 44,
                   borderRadius: 0,
-                  border: "none",
-                  borderBottom: "2px solid #1a1a1a",
-                  background: "transparent",
+                  border: "2px solid " + TXT,
+                  background: CARD,
                   color: TXT,
                   fontSize: 13,
-                  fontFamily: "inherit",
+                  fontFamily: NUM_FONT,
                   fontWeight: 600,
                   outline: "none",
                   cursor: "pointer",
                   appearance: "none",
-                  WebkitAppearance: "none"
+                  WebkitAppearance: "none",
+                  flex: 1
                 }}
               >
                 <option value="popular_desc">Most Popular</option>
@@ -664,7 +763,7 @@ export default function App() {
                 textTransform: "uppercase",
                 margin: "20px 0 10px",
                 paddingBottom: 6,
-                borderBottom: `1px solid ${group.isFavs ? ACC : "#e0e0dc"}`,
+                borderBottom: `1px solid ${group.isFavs ? ACC : "#E5E7EB"}`,
                 display: "flex",
                 alignItems: "center",
                 gap: 6
@@ -676,18 +775,29 @@ export default function App() {
                 const selected = meal[food.id] !== undefined;
                 const g = meal[food.id] || 0;
                 return (
-                  <div key={food.id} style={{ borderRadius:16, padding:"14px 16px", marginBottom:10, background:CARD, transition:"all 0.2s", ...(selected?{...neuDn,outline:"2px solid "+ACC}:neuSm) }}>
+                  <div
+                    key={food.id}
+                    style={{
+                      borderRadius: 0,
+                      padding: "12px 16px",
+                      marginBottom: 8,
+                      background: CARD,
+                      transition: "all 0.15s",
+                      border: selected ? "2px solid " + ACC : "1px solid #E5E7EB",
+                      boxShadow: selected ? "none" : "none"
+                    }}
+                  >
                     <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", cursor:"pointer" }} onClick={() => toggleFood(food.id, food)}>
                       <div style={{ flex:1, minWidth:0 }}>
                         {macroFilter === "any" ? (
                           <>
                             <span style={{ fontSize:14, fontWeight:700 }}>{food.name}</span>
-                            <div style={{ display:"flex", gap:12, marginTop:4, flexWrap:"wrap" }}>
-                              <span style={{ fontSize:11, color:MUTE }}><b style={{color:TXT}}>{food.per100.cal}</b> cal</span>
-                              <span style={{ fontSize:11, color:MUTE }}><b style={{color:TXT}}>{food.per100.protein}g</b> P</span>
-                              <span style={{ fontSize:11, color:MUTE }}><b style={{color:TXT}}>{food.per100.carbs}g</b> C</span>
-                              <span style={{ fontSize:11, color:MUTE }}><b style={{color:TXT}}>{food.per100.fat}g</b> F</span>
-                              <span style={{ fontSize:10, color:MUTE }}>per 100g</span>
+                            <div style={{ display: "flex", gap: 12, marginTop: 4, flexWrap: "wrap" }}>
+                              <span style={{ fontSize: 11, color: MUTE, fontFamily: NUM_FONT }}><b style={{ color: TXT }}>{food.per100.cal}</b> cal</span>
+                              <span style={{ fontSize: 11, color: MUTE, fontFamily: NUM_FONT }}><b style={{ color: TXT }}>{food.per100.protein}g</b> <span style={{ color: PROT_COLOR, fontWeight: 700 }}>P</span></span>
+                              <span style={{ fontSize: 11, color: MUTE, fontFamily: NUM_FONT }}><b style={{ color: TXT }}>{food.per100.carbs}g</b> <span style={{ color: CARB_COLOR, fontWeight: 700 }}>C</span></span>
+                              <span style={{ fontSize: 11, color: MUTE, fontFamily: NUM_FONT }}><b style={{ color: TXT }}>{food.per100.fat}g</b> <span style={{ color: FAT_COLOR, fontWeight: 700 }}>F</span></span>
+                              <span style={{ fontSize: 10, color: MUTE }}>per 100g</span>
                             </div>
                           </>
                         ) : (
@@ -697,16 +807,31 @@ export default function App() {
                               <span style={{ fontSize:20, fontWeight:900, color:TXT, fontFamily:NUM_FONT, lineHeight:1 }}>{food.per100[macroFilter]}g</span>
                               <span style={{ fontSize:12, color:MUTE }}>{macroFilter} per 100g</span>
                             </div>
-                            <div style={{ display:"flex", gap:10, marginTop:3, flexWrap:"wrap" }}>
-                              {macroFilter!=="protein" && <span style={{ fontSize:11, color:MUTE }}><b style={{color:TXT}}>{food.per100.protein}g</b> P</span>}
-                              {macroFilter!=="carbs"   && <span style={{ fontSize:11, color:MUTE }}><b style={{color:TXT}}>{food.per100.carbs}g</b> C</span>}
-                              {macroFilter!=="fat"     && <span style={{ fontSize:11, color:MUTE }}><b style={{color:TXT}}>{food.per100.fat}g</b> F</span>}
-                              <span style={{ fontSize:11, color:MUTE }}><b style={{color:TXT}}>{food.per100.cal}</b> cal</span>
+                            <div style={{ display: "flex", gap: 10, marginTop: 3, flexWrap: "wrap" }}>
+                              {macroFilter !== "protein" && <span style={{ fontSize: 11, color: MUTE, fontFamily: NUM_FONT }}><b style={{ color: TXT }}>{food.per100.protein}g</b> <span style={{ color: PROT_COLOR, fontWeight: 700 }}>P</span></span>}
+                              {macroFilter !== "carbs" && <span style={{ fontSize: 11, color: MUTE, fontFamily: NUM_FONT }}><b style={{ color: TXT }}>{food.per100.carbs}g</b> <span style={{ color: CARB_COLOR, fontWeight: 700 }}>C</span></span>}
+                              {macroFilter !== "fat" && <span style={{ fontSize: 11, color: MUTE, fontFamily: NUM_FONT }}><b style={{ color: TXT }}>{food.per100.fat}g</b> <span style={{ color: FAT_COLOR, fontWeight: 700 }}>F</span></span>}
+                              <span style={{ fontSize: 11, color: MUTE, fontFamily: NUM_FONT }}><b style={{ color: TXT }}>{food.per100.cal}</b> cal</span>
                             </div>
                           </>
                         )}
                       </div>
-                      <div style={{ width:28, height:28, borderRadius:"50%", background:selected?ACC:CARD, color:selected?WHITE:MUTE, display:"flex", alignItems:"center", justifyContent:"center", fontWeight:800, fontSize:16, flexShrink:0, ...(selected?{}:neuSm) }}>
+                      <div
+                        style={{
+                          width: 28,
+                          height: 28,
+                          borderRadius: 0,
+                          background: selected ? ACC : CARD,
+                          color: selected ? WHITE : MUTE,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontWeight: 800,
+                          fontSize: 16,
+                          flexShrink: 0,
+                          border: "2px solid " + TXT
+                        }}
+                      >
                         {selected ? "✓" : "+"}
                       </div>
                     </div>
@@ -744,15 +869,14 @@ export default function App() {
                               onChange={e => setFoodUnit(food.id, e.target.value)}
                               style={{
                                 flex: 1,
-                                padding: "10px 8px",
+                                padding: "12px 8px",
                                 minHeight: 44,
                                 borderRadius: 0,
-                                border: "none",
-                                borderBottom: "2px solid #1a1a1a",
-                                background: "transparent",
+                                border: "2px solid " + TXT,
+                                background: CARD,
                                 color: TXT,
                                 fontSize: 13,
-                                fontFamily: "inherit",
+                                fontFamily: NUM_FONT,
                                 fontWeight: 600,
                                 outline: "none",
                                 cursor: "pointer",
@@ -775,11 +899,11 @@ export default function App() {
 
                           {/* Macro display for this food at this quantity */}
                           {qty > 0 && (
-                            <div style={{ display:"flex", gap:10, marginTop:8, flexWrap:"wrap" }}>
-                              <span style={{ fontSize:12, color:MUTE }}><b style={{color:TXT}}>{Math.round(food.per100.cal * grams / 100)}</b> cal</span>
-                              <span style={{ fontSize:12, color:MUTE }}><b style={{color:TXT}}>{Math.round(food.per100.protein * grams / 100 * 10)/10}g</b> P</span>
-                              <span style={{ fontSize:12, color:MUTE }}><b style={{color:TXT}}>{Math.round(food.per100.carbs * grams / 100 * 10)/10}g</b> C</span>
-                              <span style={{ fontSize:12, color:MUTE }}><b style={{color:TXT}}>{Math.round(food.per100.fat * grams / 100 * 10)/10}g</b> F</span>
+                            <div style={{ display: "flex", gap: 10, marginTop: 8, flexWrap: "wrap" }}>
+                              <span style={{ fontSize: 12, color: MUTE, fontFamily: NUM_FONT }}><b style={{ color: TXT }}>{Math.round(food.per100.cal * grams / 100)}</b> cal</span>
+                              <span style={{ fontSize: 12, color: MUTE, fontFamily: NUM_FONT }}><b style={{ color: TXT }}>{Math.round(food.per100.protein * grams / 100 * 10) / 10}g</b> <span style={{ color: PROT_COLOR, fontWeight: 700 }}>P</span></span>
+                              <span style={{ fontSize: 12, color: MUTE, fontFamily: NUM_FONT }}><b style={{ color: TXT }}>{Math.round(food.per100.carbs * grams / 100 * 10) / 10}g</b> <span style={{ color: CARB_COLOR, fontWeight: 700 }}>C</span></span>
+                              <span style={{ fontSize: 12, color: MUTE, fontFamily: NUM_FONT }}><b style={{ color: TXT }}>{Math.round(food.per100.fat * grams / 100 * 10) / 10}g</b> <span style={{ color: FAT_COLOR, fontWeight: 700 }}>F</span></span>
                             </div>
                           )}
                         </div>
@@ -797,7 +921,7 @@ export default function App() {
                             const val = Math.round(food.per100[k] * grams / 100 * 10) / 10;
                             const pct = Math.round((val / rda[k]) * 100);
                             return (
-                              <span key={k} style={{ fontSize:10, padding:"3px 7px", borderRadius:8, background:pct>=20?"#ddd":"#e8e8e8", color:pct>=20?ACC:MUTE, fontWeight:600 }}>
+                              <span key={k} style={{ fontSize:10, padding:"3px 7px", borderRadius:0, background:pct>=20?"#ddd":"#e8e8e8", color:pct>=20?ACC:MUTE, fontWeight:600, border: "1px solid " + MUTE }}>
                                 {MICRO_LABELS[k].split(" ").pop()} {val}{MICRO_UNITS[k]} ({pct}%)
                               </span>
                             );
@@ -829,9 +953,9 @@ export default function App() {
                   ? `${grams}g` 
                   : `${qty} ${currentUnit} (${Math.round(grams)}g)`;
                 return (
-                  <div key={id} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"8px 0", borderBottom:"1px solid #e4e4e7" }}>
+                  <div key={id} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"8px 0", borderBottom:"1px solid #E5E7EB" }}>
                     <span style={{ fontSize:13, fontWeight:600 }}>{food.name}</span>
-                    <span style={{ fontSize:13, color:MUTE }}>{display} · {Math.round(food.per100.cal * grams / 100)} cal</span>
+                    <span style={{ fontSize:13, color:MUTE, fontFamily: NUM_FONT }}>{display} · {Math.round(food.per100.cal * grams / 100)} cal</span>
                   </div>
                 );
               })}
@@ -840,19 +964,28 @@ export default function App() {
             {/* macro totals */}
             <div style={{ display: "flex", gap: 8, marginBottom: 20 }}>
               {[
-                { l: "Calories", v: Math.round(mt.cal), u: "kcal", target: r?.target },
-                { l: "Protein", v: Math.round(mt.protein), u: "g", target: r?.pG },
-                { l: "Carbs", v: Math.round(mt.carbs), u: "g", target: r?.cG },
-                { l: "Fat", v: Math.round(mt.fat), u: "g", target: r?.fG },
+               { l: "Calories", v: Math.round(mt.cal), u: "kcal", target: r?.target },
+               { l: "Protein", v: Math.round(mt.protein), u: "g", target: r?.pG },
+               { l: "Carbs", v: Math.round(mt.carbs), u: "g", target: r?.cG },
+               { l: "Fat", v: Math.round(mt.fat), u: "g", target: r?.fG },
               ].map(m => (
-                <div key={m.l} style={{ flex: 1, borderRadius: 16, padding: "14px 6px", textAlign: "center", ...neuDn }}>
-                  <span style={{ display: "block", fontSize: 10, fontWeight: 700, color: MUTE, letterSpacing: "2px", textTransform: "uppercase" }}>{m.l}</span>
-                  <span style={{ display: "block", fontSize: 20, fontWeight: 900, marginTop: 4, letterSpacing: "-0.5px", fontFamily: NUM_FONT }}>{m.v}</span>
-                  <span style={{ display: "block", fontSize: 10, color: MUTE }}>{m.u}</span>
-                  {m.target && <span style={{ display: "block", fontSize: 10, color: MUTE, marginTop: 2 }}>of {m.target}</span>}
-                </div>
-              ))}
-            </div>
+               <div
+                 key={m.l}
+                 style={{
+                   flex: 1,
+                   borderRadius: 0,
+                   padding: "14px 6px",
+                   textAlign: "center",
+                   border: "2px solid " + TXT,
+                   background: CARD
+                 }}
+               >
+                 <span style={{ display: "block", fontSize: 10, fontWeight: 700, color: MUTE, letterSpacing: "2px", textTransform: "uppercase" }}>{m.l}</span>
+                 <span style={{ display: "block", fontSize: 20, fontWeight: 900, marginTop: 4, letterSpacing: "-0.5px", fontFamily: NUM_FONT }}>{m.v}</span>
+                 <span style={{ display: "block", fontSize: 10, color: MUTE }}>{m.u}</span>
+                 {m.target && <span style={{ display: "block", fontSize: 10, color: MUTE, marginTop: 2 }}>of {m.target}</span>}
+               </div>
+              ))}            </div>
 
             {/* micronutrient bars */}
             <span style={labelStyle}>Vitamin & Mineral Coverage</span>
@@ -863,25 +996,25 @@ export default function App() {
                 <div key={k} style={{ marginBottom: 12 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 4 }}>
                     <span style={{ fontWeight: 700 }}>{MICRO_LABELS[k]}</span>
-                    <span style={{ color: pct >= 100 ? "#2d8a4e" : pct >= 50 ? MUTE : "#c44", fontWeight: 700 }}>
+                    <span style={{ color: pct >= 100 ? "#059669" : pct >= 50 ? MUTE : "#DC2626", fontWeight: 700 }}>
                       {Math.round(mt[k]*10)/10}{MICRO_UNITS[k]} · {pct}%
                     </span>
                   </div>
-                  <div style={{ height: 8, borderRadius: 6, ...neuDn }}>
-                    <div style={{ height: "100%", width: `${w}%`, borderRadius: 6, background: pct >= 100 ? "#2d8a4e" : pct >= 50 ? "#888" : "#c44", transition: "width 0.4s ease" }} />
+                  <div style={{ height: 8, borderRadius: 0, background: "#E5E7EB", border: "1px solid #D1D5DB" }}>
+                    <div style={{ height: "100%", width: w + "%", borderRadius: 0, background: pct >= 100 ? "#059669" : pct >= 50 ? ACC : "#DC2626", transition: "width 0.4s ease" }} />
                   </div>
                 </div>
               );
             })}
 
-            <button onClick={() => setMeal({})} style={{ width: "100%", padding: "14px", minHeight: 44, borderRadius: 14, border: "none", background: CARD, color: MUTE, fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", marginTop: 10, ...neuSm }}>
+            <button onClick={() => setMeal({})} style={{ width: "100%", padding: "14px", minHeight: 44, borderRadius: 0, border: "2px solid " + TXT, background: CARD, color: TXT, fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: HEADER_FONT, marginTop: 10, boxShadow: "4px 4px 0px 0px " + TXT }}>
               Clear Meal
             </button>
           </div>
         )}
       </div>
 
-      <footer style={{ textAlign: "center", padding: 20, fontSize: 11, color: MUTE }}>macrocalculatorfree.com · No ads · No data collected · Always free</footer>
+      <footer style={{ textAlign: "center", padding: 20, fontSize: 11, color: MUTE, fontFamily: HEADER_FONT }}>macrocalculatorfree.com · No ads · No data collected · Always free</footer>
     </div>
   );
 }
@@ -890,8 +1023,8 @@ export default function App() {
 function SH({ n, t }) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
-      <span style={{ fontWeight: 700, fontSize: 15, color: MUTE, flexShrink: 0 }}>[{n}]</span>
-      <h2 style={{ margin: 0, fontSize: 17, fontWeight: 700 }}>{t}</h2>
+      <span style={{ fontWeight: 700, fontSize: 14, color: TXT, fontFamily: NUM_FONT, flexShrink: 0 }}>[{n}]</span>
+      <h2 style={{ margin: 0, fontSize: 16, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px", fontFamily: HEADER_FONT }}>{t}</h2>
     </div>
   );
 }
@@ -900,9 +1033,29 @@ function R({ l, children }) {
 }
 function Tog({ opts, v, s }) {
   return (
-    <div style={{ display: "flex", borderRadius: 14, padding: 3, background: CARD, ...neuDn }}>
-      {opts.map(o => (
-        <button key={o.id} onClick={() => s(o.id)} style={{ flex: 1, padding: "10px 8px", minHeight: 44, borderRadius: 11, border: "none", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", transition: "all 0.15s ease", background: v===o.id ? ACC : "transparent", color: v===o.id ? WHITE : MUTE }}>{o.l}</button>
+    <div style={{ display: "flex", border: "2px solid " + TXT, borderRadius: 0, padding: 0, background: CARD }}>
+      {opts.map((o, i) => (
+        <button
+          key={o.id}
+          onClick={() => s(o.id)}
+          style={{
+            flex: 1,
+            padding: "10px 8px",
+            minHeight: 44,
+            borderRadius: 0,
+            border: "none",
+            borderRight: i === opts.length - 1 ? "none" : "2px solid " + TXT,
+            fontSize: 13,
+            fontWeight: 700,
+            cursor: "pointer",
+            fontFamily: HEADER_FONT,
+            transition: "all 0.1s ease",
+            background: v === o.id ? ACC : "transparent",
+            color: v === o.id ? WHITE : TXT
+          }}
+        >
+          {o.l}
+        </button>
       ))}
     </div>
   );

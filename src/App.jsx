@@ -381,7 +381,7 @@ export default function App() {
   const cardStyle = { 
     background: CARD, 
     borderRadius: 24, 
-    padding: "40px 32px", 
+    padding: "24px 20px", 
     marginBottom: 24, 
     boxShadow: "var(--shadow)", 
     border: "1px solid var(--border)",
@@ -416,7 +416,7 @@ export default function App() {
   return (
     <div style={{ minHeight: "100vh", background: BG, fontFamily: HEADER_FONT, color: TXT, WebkitFontSmoothing: "antialiased", MozOsxFontSmoothing: "grayscale" }}>
 
-      <header style={{ width: "100%", maxWidth: 1200, margin: "0 auto", padding: "40px 32px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
+      <header style={{ width: "100%", maxWidth: 1200, margin: "0 auto", padding: "16px 32px 8px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
           <div style={{ width: 48, height: 48, borderRadius: 12, background: ACC, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 24, color: WHITE }}>M</div>
           <div>
@@ -449,7 +449,7 @@ export default function App() {
           <div style={cardStyle}>
             <SH n="1" t="Logic" />
             {FORMULAS.map(f => (
-              <button key={f.id} onClick={() => setFormula(f.id)} style={{ display: "block", width: "100%", position: "relative", borderRadius: 16, padding: 24, textAlign: "left", cursor: "pointer", border: "1px solid var(--border)", fontFamily: "inherit", marginBottom: 14, background: formula === f.id ? ACC : "var(--input-bg)", color: formula === f.id ? WHITE : TXT, transition: "all 0.3s ease" }}>
+              <button key={f.id} onClick={() => setFormula(f.id)} style={{ display: "block", width: "100%", position: "relative", borderRadius: 16, padding: 14, textAlign: "left", cursor: "pointer", border: "1px solid var(--border)", fontFamily: "inherit", marginBottom: 8, background: formula === f.id ? ACC : "var(--input-bg)", color: formula === f.id ? WHITE : TXT, transition: "all 0.3s ease" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
                   <span style={{ fontSize: 16, fontWeight: 800 }}>{f.name}</span>
                   <span style={{ fontSize: 10, fontWeight: 800, padding: "2px 8px", borderRadius: 6, background: formula === f.id ? "rgba(255,255,255,0.1)" : "var(--card-bg)", color: formula === f.id ? WHITE : MUTE }}>{f.badge}</span>
@@ -475,7 +475,7 @@ export default function App() {
             {needsBF && <R l="Body Fat %"><input type="number" value={bf} onChange={e => setBf(e.target.value)} placeholder="BF %" style={inputStyle} /></R>}
             <R l="Activity">
               {ACT.map(a => (
-                <button key={a.v} onClick={() => setActivity(a.v)} style={{ display: "flex", gap: 14, alignItems: "center", padding: "16px 20px", minHeight: 44, borderRadius: 14, border: "1px solid var(--border)", background: activity === a.v ? ACC : "var(--input-bg)", color: activity === a.v ? WHITE : TXT, cursor: "pointer", textAlign: "left", fontFamily: "inherit", width: "100%", marginBottom: 10, transition: "all 0.3s ease" }}>
+                <button key={a.v} onClick={() => setActivity(a.v)} style={{ display: "flex", gap: 14, alignItems: "center", padding: "10px 14px", minHeight: 44, borderRadius: 14, border: "1px solid var(--border)", background: activity === a.v ? ACC : "var(--input-bg)", color: activity === a.v ? WHITE : TXT, cursor: "pointer", textAlign: "left", fontFamily: "inherit", width: "100%", marginBottom: 6, transition: "all 0.3s ease" }}>
                   <div style={{ width: 10, height: 10, borderRadius: "50%", background: activity === a.v ? WHITE : "var(--border)", flexShrink: 0 }} />
                   <div><div style={{ fontSize: 15, fontWeight: 700 }}>{a.label}</div><div style={{ fontSize: 13, color: activity === a.v ? "rgba(255,255,255,0.6)" : MUTE }}>{a.desc}</div></div>
                 </button>
@@ -484,7 +484,7 @@ export default function App() {
             <R l="Objective">
               <div style={{ display: "flex", gap: 10 }}>
                 {GOALS.map(g => (
-                  <button key={g.id} onClick={() => setGoal(g.id)} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, padding: "18px 8px", minHeight: 44, borderRadius: 14, border: "1px solid var(--border)", background: goal === g.id ? ACC : "var(--input-bg)", color: goal === g.id ? WHITE : TXT, cursor: "pointer", fontFamily: "inherit", transition: "all 0.3s ease" }}>
+                  <button key={g.id} onClick={() => setGoal(g.id)} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, padding: "12px 8px", minHeight: 44, borderRadius: 14, border: "1px solid var(--border)", background: goal === g.id ? ACC : "var(--input-bg)", color: goal === g.id ? WHITE : TXT, cursor: "pointer", fontFamily: "inherit", transition: "all 0.3s ease" }}>
                     <span style={{ fontSize: 14, fontWeight: 800 }}>{g.label}</span>
                     <span style={{ fontSize: 11, color: goal === g.id ? "rgba(255,255,255,0.6)" : MUTE }}>{g.offset > 0 ? "+" : ""}{g.offset} cal</span>
                   </button>
@@ -493,7 +493,7 @@ export default function App() {
             </R>
             <R l="Strategy">
               {[{ k: "p", l: "Protein", v: prot, c: PROT_COLOR }, { k: "c", l: "Carbs", v: carb, c: CARB_COLOR }, { k: "f", l: "Fat", v: fatP, c: FAT_COLOR }].map(m => (
-                <div key={m.k} style={{ marginBottom: 18 }}>
+                <div key={m.k} style={{ marginBottom: 12 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", fontSize: 14, fontWeight: 700, color: MUTE, marginBottom: 10 }}><span>{m.l}</span><span style={{ color: m.c, fontWeight: 800 }}>{m.v}%</span></div>
                   <input type="range" min={5} max={90} value={m.v} onChange={e => sl(m.k, parseInt(e.target.value))} style={{ width: "100%", accentColor: m.c, cursor: "pointer" }} />
                 </div>
@@ -754,14 +754,14 @@ export default function App() {
 /* ── helpers ── */
 function SH({ n, t }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 32 }}>
+    <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 16 }}>
       <span style={{ display:"flex", alignItems:"center", justifyContent:"center", width:22, height:22, borderRadius:4, background:ACC, color:WHITE, fontWeight: 900, fontSize: 10, fontFamily: NUM_FONT, flexShrink: 0 }}>{n}</span>
       <h2 style={{ margin: 0, fontSize: 20, fontWeight: 900, textTransform: "uppercase", letterSpacing: "1px", fontFamily: HEADER_FONT }}>{t}</h2>
     </div>
   );
 }
 function R({ l, children }) {
-  return <div style={{ marginBottom: 32 }}><span style={{ display: "block", fontSize: 12, fontWeight: 800, color: MUTE, letterSpacing: "1.2px", textTransform: "uppercase", marginBottom: 12 }}>{l}</span>{children}</div>;
+  return <div style={{ marginBottom: 16 }}><span style={{ display: "block", fontSize: 12, fontWeight: 800, color: MUTE, letterSpacing: "1.2px", textTransform: "uppercase", marginBottom: 8 }}>{l}</span>{children}</div>;
 }
 function Tog({ opts, v, s }) {
   return (

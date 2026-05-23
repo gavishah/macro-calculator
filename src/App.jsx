@@ -61,43 +61,55 @@ function calcBMR(formula, sex, wKg, hCm, age, bf) {
 }
 
 /* ── Animated Num ── */
-function AN({ value }) {
+function AN({ value, cursor = false }) {
   const [display, setDisplay] = useState(value);
+  const [showCursor, setShowCursor] = useState(false);
   const rafRef = useRef(null);
   const prevRef = useRef(value);
+  const cursorTimer = useRef(null);
 
   useEffect(() => {
     const from = prevRef.current;
     prevRef.current = value;
     if (from === value) return;
+    if (cursor) {
+      setShowCursor(true);
+      clearTimeout(cursorTimer.current);
+      /* 400 ms animation + 1 000 ms blink = 1 400 ms total */
+      cursorTimer.current = setTimeout(() => setShowCursor(false), 1400);
+    }
     const t0 = performance.now();
     const run = (now) => {
       const progress = Math.min((now - t0) / 400, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
       setDisplay(Math.round(from + (value - from) * eased));
-      if (progress < 1) {
-        rafRef.current = requestAnimationFrame(run);
-      }
+      if (progress < 1) rafRef.current = requestAnimationFrame(run);
     };
     rafRef.current = requestAnimationFrame(run);
-    return () => cancelAnimationFrame(rafRef.current);
-  }, [value]);
+    return () => { cancelAnimationFrame(rafRef.current); clearTimeout(cursorTimer.current); };
+  }, [value]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  return <>{display}</>;
+  return (
+    <>
+      <span style={{ fontFamily: NUM_FONT }}>{display}</span>
+      {cursor && showCursor && <span className="result-cursor">|</span>}
+    </>
+  );
 }
 
 /* ═══════════════════════════════════════════
    STYLES — light, clean, soft neumorphic
 ═══════════════════════════════════════════ */
-const BG = "#f0f0f3";
-const CARD = "#f0f0f3";
-const TXT = "#2d2d2d";
-const MUTE = "#8a8a8e";
-const ACC = "#2d2d2d";
+const BG = "#F4F4F0";
+const CARD = "#F4F4F0";
+const TXT = "#1a1a1a";
+const MUTE = "#888880";
+const ACC = "#1a1a1a";
 const WHITE = "#ffffff";
-const neuUp = { boxShadow: "6px 6px 12px #cbcbcf, -6px -6px 12px #ffffff" };
-const neuDn = { boxShadow: "inset 4px 4px 8px #cbcbcf, inset -4px -4px 8px #ffffff" };
-const neuSm = { boxShadow: "3px 3px 6px #cbcbcf, -3px -3px 6px #ffffff" };
+const NUM_FONT = "'DM Sans', system-ui, -apple-system, sans-serif";
+const neuUp = { boxShadow: "6px 6px 12px #d4d4d0, -6px -6px 12px #ffffff" };
+const neuDn = { boxShadow: "inset 4px 4px 8px #d4d4d0, inset -4px -4px 8px #ffffff" };
+const neuSm = { boxShadow: "3px 3px 6px #d4d4d0, -3px -3px 6px #ffffff" };
 
 /* ═══════════════════════════════════════════
    MAIN APP
@@ -266,17 +278,17 @@ export default function App() {
   };
 
   const cardStyle = { background: CARD, borderRadius: 22, padding: "24px 20px", marginBottom: 18, ...neuUp };
-  const inputStyle = { width: "100%", padding: "13px 16px", minHeight: 44, borderRadius: 14, border: "none", background: CARD, color: TXT, fontSize: 16, fontFamily: "inherit", outline: "none", boxSizing: "border-box", fontWeight: 600, WebkitAppearance: "none", appearance: "none", ...neuDn };
-  const labelStyle = { display: "block", fontSize: 11, fontWeight: 800, color: MUTE, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 };
+  const inputStyle = { width: "100%", padding: "13px 4px", minHeight: 44, borderRadius: 0, border: "none", borderBottom: "2px solid #1a1a1a", background: "transparent", color: TXT, fontSize: 16, fontFamily: "inherit", outline: "none", boxSizing: "border-box", fontWeight: 600, WebkitAppearance: "none", appearance: "none" };
+  const labelStyle = { display: "block", fontSize: 11, fontWeight: 700, color: MUTE, letterSpacing: "2px", textTransform: "uppercase", marginBottom: 8 };
 
   return (
-    <div style={{ minHeight: "100vh", background: BG, fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif", color: TXT, WebkitFontSmoothing: "antialiased", MozOsxFontSmoothing: "grayscale" }}>
+    <div style={{ minHeight: "100vh", background: BG, fontFamily: "'Courier Prime', 'Courier New', monospace", color: TXT, WebkitFontSmoothing: "antialiased", MozOsxFontSmoothing: "grayscale" }}>
 
       {/* HEADER */}
       <header className="app-header">
         <div style={{ width: 48, height: 48, borderRadius: 16, background: CARD, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 24, color: ACC, ...neuUp }}>M</div>
         <div>
-          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 900, letterSpacing: "-0.5px" }}>Macro Calculator</h1>
+          <h1 className="typewriter-title" style={{ margin: 0, fontSize: 22, fontWeight: 700 }}>Macro Calculator</h1>
           <p style={{ margin: 0, fontSize: 12, color: MUTE }}>Free · No login · No tracking · No ads</p>
         </div>
       </header>
@@ -287,14 +299,14 @@ export default function App() {
         <div style={cardStyle}>
           <SH n="1" t="Choose Your Formula" />
           {FORMULAS.map(f => (
-            <button key={f.id} onClick={() => setFormula(f.id)} style={{ display: "block", width: "100%", position: "relative", borderRadius: 16, padding: 16, textAlign: "left", cursor: "pointer", border: "none", fontFamily: "inherit", marginBottom: 10, background: CARD, transition: "all 0.2s", ...(formula===f.id ? {...neuDn, outline:"2px solid "+ACC} : neuSm) }}>
+            <button key={f.id} onClick={() => setFormula(f.id)} style={{ display: "block", width: "100%", position: "relative", borderRadius: 16, padding: 16, textAlign: "left", cursor: "pointer", border: "none", fontFamily: "inherit", marginBottom: 10, background: formula===f.id ? ACC : CARD, color: formula===f.id ? WHITE : TXT, transition: "all 0.15s ease", ...(formula===f.id ? {boxShadow:"none"} : neuSm) }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
                 <span style={{ fontSize: 15, fontWeight: 800 }}>{f.name}</span>
-                <span style={{ fontSize: 10, fontWeight: 800, padding: "3px 8px", borderRadius: 20, background: formula===f.id ? ACC : "#ddd", color: formula===f.id ? WHITE : MUTE }}>{f.badge}</span>
+                <span style={{ fontSize: 10, fontWeight: 800, padding: "3px 8px", borderRadius: 20, background: formula===f.id ? WHITE : "#ddd", color: formula===f.id ? ACC : MUTE }}>{f.badge}</span>
               </div>
-              <p style={{ margin: "0 0 2px", fontSize: 13, fontWeight: 600, color: MUTE }}>{f.who}</p>
-              <p style={{ margin: 0, fontSize: 12, color: MUTE }}>{f.detail}</p>
-              {formula===f.id && <div style={{ position: "absolute", top: 14, right: 14, width: 24, height: 24, borderRadius: "50%", background: ACC, color: WHITE, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 12 }}>✓</div>}
+              <p style={{ margin: "0 0 2px", fontSize: 13, fontWeight: 600, color: formula===f.id ? "rgba(255,255,255,0.65)" : MUTE }}>{f.who}</p>
+              <p style={{ margin: 0, fontSize: 12, color: formula===f.id ? "rgba(255,255,255,0.5)" : MUTE }}>{f.detail}</p>
+              {formula===f.id && <div style={{ position: "absolute", top: 14, right: 14, width: 24, height: 24, borderRadius: "50%", background: WHITE, color: ACC, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 12 }}>✓</div>}
             </button>
           ))}
         </div>
@@ -314,18 +326,18 @@ export default function App() {
           {needsBF && <R l="Body Fat %"><input type="number" value={bf} onChange={e=>setBf(e.target.value)} placeholder="e.g. 15" style={inputStyle} /></R>}
           <R l="Activity Level">
             {ACT.map(a => (
-              <button key={a.v} onClick={()=>setActivity(a.v)} style={{ display:"flex", gap:10, alignItems:"center", padding:"12px 14px", minHeight:44, borderRadius:14, border:"none", background:CARD, cursor:"pointer", textAlign:"left", fontFamily:"inherit", width:"100%", marginBottom:8, ...(activity===a.v?{...neuDn,outline:"2px solid "+ACC}:neuSm) }}>
-                <div style={{ width:8, height:8, borderRadius:"50%", background:activity===a.v?ACC:"#ccc", flexShrink:0 }} />
-                <div><div style={{fontSize:14,fontWeight:700}}>{a.label}</div><div style={{fontSize:12,color:MUTE}}>{a.desc}</div></div>
+              <button key={a.v} onClick={()=>setActivity(a.v)} style={{ display:"flex", gap:10, alignItems:"center", padding:"12px 14px", minHeight:44, borderRadius:14, border:"none", background:activity===a.v?ACC:CARD, color:activity===a.v?WHITE:TXT, cursor:"pointer", textAlign:"left", fontFamily:"inherit", width:"100%", marginBottom:8, transition:"all 0.15s ease", ...(activity===a.v?{boxShadow:"none"}:neuSm) }}>
+                <div style={{ width:8, height:8, borderRadius:"50%", background:activity===a.v?WHITE:"#ccc", flexShrink:0 }} />
+                <div><div style={{fontSize:14,fontWeight:700}}>{a.label}</div><div style={{fontSize:12,color:activity===a.v?"rgba(255,255,255,0.65)":MUTE}}>{a.desc}</div></div>
               </button>
             ))}
           </R>
           <R l="Goal">
             <div style={{display:"flex",gap:8}}>
               {GOALS.map(g => (
-                <button key={g.id} onClick={()=>setGoal(g.id)} style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", gap:3, padding:"14px 6px", minHeight:44, borderRadius:14, border:"none", background:CARD, cursor:"pointer", fontFamily:"inherit", ...(goal===g.id?{...neuDn,outline:"2px solid "+ACC}:neuSm) }}>
-                  <span style={{fontSize:13,fontWeight:700,color:goal===g.id?ACC:MUTE}}>{g.label}</span>
-                  <span style={{fontSize:11,color:MUTE}}>{g.offset>0?"+":""}{g.offset} cal</span>
+                <button key={g.id} onClick={()=>setGoal(g.id)} style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", gap:3, padding:"14px 6px", minHeight:44, borderRadius:14, border:"none", background:goal===g.id?ACC:CARD, cursor:"pointer", fontFamily:"inherit", transition:"all 0.15s ease", ...(goal===g.id?{boxShadow:"none"}:neuSm) }}>
+                  <span style={{fontSize:13,fontWeight:700,color:goal===g.id?WHITE:MUTE}}>{g.label}</span>
+                  <span style={{fontSize:11,color:goal===g.id?"rgba(255,255,255,0.65)":MUTE}}>{g.offset>0?"+":""}{g.offset} cal</span>
                 </button>
               ))}
             </div>
@@ -337,11 +349,19 @@ export default function App() {
                 <input type="range" min={5} max={90} value={m.v} onChange={e=>sl(m.k,parseInt(e.target.value))} style={{width:"100%",accentColor:ACC,cursor:"pointer"}} />
               </div>
             ))}
-            <div style={{display:"flex",height:8,borderRadius:6,overflow:"hidden",...neuDn}}>
-              <div style={{height:"100%",width:`${prot}%`,background:"#555",transition:"width 0.3s",borderRadius:"6px 0 0 6px"}} />
-              <div style={{height:"100%",width:`${carb}%`,background:"#999",transition:"width 0.3s"}} />
-              <div style={{height:"100%",width:`${fatP}%`,background:"#ccc",transition:"width 0.3s",borderRadius:"0 6px 6px 0"}} />
-            </div>
+            {(() => {
+              const B = 20;
+              const pB = Math.round(prot / 100 * B);
+              const cB = Math.round(carb / 100 * B);
+              const fB = Math.max(0, B - pB - cB);
+              return (
+                <div style={{ fontSize: 16, letterSpacing: "1px", lineHeight: 1, marginTop: 4, userSelect: "none" }}>
+                  <span style={{ color: TXT }}>{"█".repeat(pB)}</span>
+                  <span style={{ color: MUTE }}>{"█".repeat(cB)}</span>
+                  <span style={{ color: "#c8c8c4" }}>{"█".repeat(fB)}</span>
+                </div>
+              );
+            })()}
           </R>
         </div>
 
@@ -356,14 +376,14 @@ export default function App() {
           ) : (
             <>
               <div style={{borderRadius:18,padding:"28px 20px",textAlign:"center",marginBottom:14,background:ACC,color:WHITE,...neuUp}}>
-                <span style={{display:"block",fontSize:11,fontWeight:700,opacity:0.7,letterSpacing:"0.8px",textTransform:"uppercase",marginBottom:4}}>Daily Target</span>
-                <span style={{display:"block",fontSize:54,fontWeight:900,letterSpacing:"-2px",lineHeight:1.05}}><AN value={r.target} /></span>
+                <span style={{display:"block",fontSize:11,fontWeight:700,opacity:0.7,letterSpacing:"2px",textTransform:"uppercase",marginBottom:4}}>Daily Target</span>
+                <span style={{display:"block",fontSize:54,fontWeight:900,letterSpacing:"-2px",lineHeight:1.05}}><AN value={r.target} cursor /></span>
                 <span style={{display:"block",fontSize:13,opacity:0.6,marginTop:4}}>kcal / day</span>
               </div>
               <div style={{display:"flex",gap:10,marginBottom:20}}>
                 {[{l:"BMR",v:r.bmr,t:"At rest"},{l:"TDEE",v:r.tdee,t:"With activity"}].map(c => (
                   <div key={c.l} style={{flex:1,borderRadius:16,padding:"16px 12px",textAlign:"center",...neuDn}}>
-                    <span style={{display:"block",fontSize:10,fontWeight:700,color:MUTE,letterSpacing:"0.8px",textTransform:"uppercase",marginBottom:4}}>{c.l}</span>
+                    <span style={{display:"block",fontSize:10,fontWeight:700,color:MUTE,letterSpacing:"2px",textTransform:"uppercase",marginBottom:4}}>{c.l}</span>
                     <span style={{display:"block",fontSize:26,fontWeight:900,letterSpacing:"-1px"}}><AN value={c.v} /></span>
                     <span style={{display:"block",fontSize:11,color:MUTE,marginTop:3}}>{c.t}</span>
                   </div>
@@ -418,8 +438,8 @@ export default function App() {
                     onClick={() => { setFoodTab(cat.id); setFoodSearch(""); }}
                     style={{
                       padding:"10px 14px", minHeight:44, borderRadius:20, border:"none", fontSize:13, fontWeight:700,
-                      cursor:"pointer", fontFamily:"inherit", whiteSpace:"nowrap", background:CARD, color:foodTab===cat.id?ACC:MUTE,
-                      transition:"all 0.2s", ...(foodTab===cat.id ? {...neuDn, outline:"2px solid "+ACC} : neuSm)
+                      cursor:"pointer", fontFamily:"inherit", whiteSpace:"nowrap", background:foodTab===cat.id?ACC:CARD, color:foodTab===cat.id?WHITE:MUTE,
+                      transition:"all 0.15s ease", ...(foodTab===cat.id ? {boxShadow:"none"} : neuSm)
                     }}
                   >
                     {cat.label}
@@ -528,8 +548,8 @@ export default function App() {
                 { l: "Fat", v: Math.round(mt.fat), u: "g", target: r?.fG },
               ].map(m => (
                 <div key={m.l} style={{ flex: 1, borderRadius: 16, padding: "14px 6px", textAlign: "center", ...neuDn }}>
-                  <span style={{ display: "block", fontSize: 10, fontWeight: 700, color: MUTE, letterSpacing: "0.5px", textTransform: "uppercase" }}>{m.l}</span>
-                  <span style={{ display: "block", fontSize: 20, fontWeight: 900, marginTop: 4, letterSpacing: "-0.5px" }}>{m.v}</span>
+                  <span style={{ display: "block", fontSize: 10, fontWeight: 700, color: MUTE, letterSpacing: "2px", textTransform: "uppercase" }}>{m.l}</span>
+                  <span style={{ display: "block", fontSize: 20, fontWeight: 900, marginTop: 4, letterSpacing: "-0.5px", fontFamily: NUM_FONT }}>{m.v}</span>
                   <span style={{ display: "block", fontSize: 10, color: MUTE }}>{m.u}</span>
                   {m.target && <span style={{ display: "block", fontSize: 10, color: MUTE, marginTop: 2 }}>of {m.target}</span>}
                 </div>
@@ -571,20 +591,20 @@ export default function App() {
 /* ── helpers ── */
 function SH({ n, t }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
-      <div style={{ width: 28, height: 28, borderRadius: "50%", background: ACC, color: WHITE, fontWeight: 800, fontSize: 13, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, ...neuUp }}>{n}</div>
-      <h2 style={{ margin: 0, fontSize: 17, fontWeight: 800, letterSpacing: "-0.3px" }}>{t}</h2>
+    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
+      <span style={{ fontWeight: 700, fontSize: 15, color: MUTE, flexShrink: 0 }}>[{n}]</span>
+      <h2 style={{ margin: 0, fontSize: 17, fontWeight: 700 }}>{t}</h2>
     </div>
   );
 }
 function R({ l, children }) {
-  return <div style={{ marginBottom: 20 }}><span style={{ display: "block", fontSize: 11, fontWeight: 800, color: MUTE, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>{l}</span>{children}</div>;
+  return <div style={{ marginBottom: 20 }}><span style={{ display: "block", fontSize: 11, fontWeight: 700, color: MUTE, letterSpacing: "2px", textTransform: "uppercase", marginBottom: 8 }}>{l}</span>{children}</div>;
 }
 function Tog({ opts, v, s }) {
   return (
     <div style={{ display: "flex", borderRadius: 14, padding: 3, background: CARD, ...neuDn }}>
       {opts.map(o => (
-        <button key={o.id} onClick={() => s(o.id)} style={{ flex: 1, padding: "10px 8px", minHeight: 44, borderRadius: 11, border: "none", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", transition: "all 0.2s", background: v===o.id ? CARD : "transparent", color: v===o.id ? ACC : MUTE, ...(v===o.id ? neuSm : {}) }}>{o.l}</button>
+        <button key={o.id} onClick={() => s(o.id)} style={{ flex: 1, padding: "10px 8px", minHeight: 44, borderRadius: 11, border: "none", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", transition: "all 0.15s ease", background: v===o.id ? ACC : "transparent", color: v===o.id ? WHITE : MUTE }}>{o.l}</button>
       ))}
     </div>
   );

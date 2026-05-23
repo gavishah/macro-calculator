@@ -108,6 +108,7 @@ const CARD = "var(--card-bg)";
 const TXT = "var(--txt)";
 const MUTE = "var(--mute)";
 const ACC = "var(--primary-acc)";
+const HIGHLIGHT = "var(--active-highlight)";
 const WHITE = "#FFFFFF";
 const NUM_FONT = "var(--font-mono)";
 const HEADER_FONT = "var(--font-header)";
@@ -377,17 +378,18 @@ export default function App() {
 
   const cardStyle = { 
     background: CARD, 
-    borderRadius: 16, 
+    borderRadius: 20, 
     padding: "24px 20px", 
-    marginBottom: 18, 
+    marginBottom: 20, 
     boxShadow: "var(--shadow)", 
-    border: "1px solid var(--border)" 
+    border: "1px solid var(--border)",
+    transition: "transform 0.2s ease, box-shadow 0.2s ease"
   };
   const inputStyle = { 
     width: "100%", 
     padding: "13px 12px", 
-    minHeight: 44, 
-    borderRadius: 12, 
+    minHeight: 48, 
+    borderRadius: 14, 
     border: "1px solid var(--border)", 
     background: "var(--input-bg)", 
     color: TXT, 
@@ -400,22 +402,22 @@ export default function App() {
   const labelStyle = { 
     display: "block", 
     fontSize: 11, 
-    fontWeight: 700, 
+    fontWeight: 800, 
     color: MUTE, 
-    letterSpacing: "2px", 
+    letterSpacing: "1.5px", 
     textTransform: "uppercase", 
-    marginBottom: 8, 
+    marginBottom: 10, 
     fontFamily: HEADER_FONT 
   };
 
   return (
     <div style={{ minHeight: "100vh", background: BG, fontFamily: HEADER_FONT, color: TXT, WebkitFontSmoothing: "antialiased", MozOsxFontSmoothing: "grayscale" }}>
 
-      <header style={{ maxWidth: 1200, margin: "0 auto", padding: "24px 20px 8px", display: "flex", alignItems: "center", gap: 14 }}>
-        <div style={{ width: 48, height: 48, borderRadius: 12, background: ACC, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 24, color: WHITE, boxShadow: "var(--shadow)" }}>M</div>
+      <header style={{ maxWidth: 1200, margin: "0 auto", padding: "32px 24px 12px", display: "flex", alignItems: "center", gap: 16 }}>
+        <div style={{ width: 52, height: 52, borderRadius: 14, background: ACC, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 26, color: WHITE, boxShadow: "0 8px 16px -4px rgba(4,120,87,0.4)" }}>M</div>
         <div>
-          <h1 className="typewriter-title" style={{ margin: 0, fontSize: 22, fontWeight: 800 }}>Macro Calculator</h1>
-          <p style={{ margin: 0, fontSize: 12, color: MUTE, fontWeight: 500 }}>Free · No login · No tracking · No ads</p>
+          <h1 className="typewriter-title" style={{ margin: 0, fontSize: 24, fontWeight: 800, letterSpacing: "-0.5px" }}>Macro Calculator</h1>
+          <p style={{ margin: 0, fontSize: 13, color: MUTE, fontWeight: 500 }}>Elite Performance · No login · Free</p>
         </div>
       </header>
 
@@ -424,14 +426,14 @@ export default function App() {
           <div style={cardStyle}>
             <SH n="1" t="Choose Your Formula" />
             {FORMULAS.map(f => (
-              <button key={f.id} onClick={() => setFormula(f.id)} style={{ display: "block", width: "100%", position: "relative", borderRadius: 12, padding: 16, textAlign: "left", cursor: "pointer", border: "1px solid var(--border)", fontFamily: "inherit", marginBottom: 10, background: formula === f.id ? ACC : CARD, color: formula === f.id ? WHITE : TXT, transition: "all 0.2s ease" }}>
+              <button key={f.id} onClick={() => setFormula(f.id)} style={{ display: "block", width: "100%", position: "relative", borderRadius: 16, padding: 18, textAlign: "left", cursor: "pointer", border: "1px solid var(--border)", fontFamily: "inherit", marginBottom: 12, background: formula === f.id ? HIGHLIGHT : CARD, color: formula === f.id ? "#000" : TXT, transition: "all 0.2s ease", boxShadow: formula === f.id ? "0 4px 12px -2px rgba(163,230,53,0.4)" : "none" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                  <span style={{ fontSize: 15, fontWeight: 800 }}>{f.name}</span>
-                  <span style={{ fontSize: 10, fontWeight: 800, padding: "3px 8px", borderRadius: 6, background: formula === f.id ? "rgba(255,255,255,0.2)" : "var(--input-bg)", color: formula === f.id ? WHITE : MUTE }}>{f.badge}</span>
+                  <span style={{ fontSize: 16, fontWeight: 800 }}>{f.name}</span>
+                  <span style={{ fontSize: 10, fontWeight: 800, padding: "3px 8px", borderRadius: 6, background: formula === f.id ? "rgba(0,0,0,0.1)" : "var(--input-bg)", color: formula === f.id ? "#000" : MUTE }}>{f.badge}</span>
                 </div>
-                <p style={{ margin: "0 0 2px", fontSize: 13, fontWeight: 600, color: formula === f.id ? "rgba(255,255,255,0.8)" : MUTE }}>{f.who}</p>
-                <p style={{ margin: 0, fontSize: 12, color: formula === f.id ? "rgba(255,255,255,0.6)" : MUTE }}>{f.detail}</p>
-                {formula === f.id && <div style={{ position: "absolute", top: 14, right: 14, width: 24, height: 24, borderRadius: "50%", background: WHITE, color: ACC, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 12 }}>✓</div>}
+                <p style={{ margin: "0 0 2px", fontSize: 13, fontWeight: 600, color: formula === f.id ? "rgba(0,0,0,0.6)" : MUTE }}>{f.who}</p>
+                <p style={{ margin: 0, fontSize: 12, color: formula === f.id ? "rgba(0,0,0,0.5)" : MUTE }}>{f.detail}</p>
+                {formula === f.id && <div style={{ position: "absolute", top: 18, right: 18, width: 24, height: 24, borderRadius: "50%", background: "#000", color: HIGHLIGHT, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 14 }}>✓</div>}
               </button>
             ))}
           </div>
@@ -450,26 +452,26 @@ export default function App() {
             {needsBF && <R l="Body Fat %"><input type="number" value={bf} onChange={e => setBf(e.target.value)} placeholder="e.g. 15" style={inputStyle} /></R>}
             <R l="Activity Level">
               {ACT.map(a => (
-                <button key={a.v} onClick={() => setActivity(a.v)} style={{ display: "flex", gap: 10, alignItems: "center", padding: "12px 14px", minHeight: 44, borderRadius: 12, border: "1px solid var(--border)", background: activity === a.v ? ACC : CARD, color: activity === a.v ? WHITE : TXT, cursor: "pointer", textAlign: "left", fontFamily: "inherit", width: "100%", marginBottom: 8, transition: "all 0.2s ease" }}>
-                  <div style={{ width: 10, height: 10, borderRadius: "50%", background: activity === a.v ? WHITE : "var(--border)", flexShrink: 0 }} />
-                  <div><div style={{ fontSize: 14, fontWeight: 700 }}>{a.label}</div><div style={{ fontSize: 12, color: activity === a.v ? "rgba(255,255,255,0.8)" : MUTE }}>{a.desc}</div></div>
+                <button key={a.v} onClick={() => setActivity(a.v)} style={{ display: "flex", gap: 12, alignItems: "center", padding: "14px 16px", minHeight: 44, borderRadius: 16, border: "1px solid var(--border)", background: activity === a.v ? HIGHLIGHT : CARD, color: activity === a.v ? "#000" : TXT, cursor: "pointer", textAlign: "left", fontFamily: "inherit", width: "100%", marginBottom: 10, transition: "all 0.2s ease" }}>
+                  <div style={{ width: 12, height: 12, borderRadius: "50%", background: activity === a.v ? "#000" : "var(--border)", flexShrink: 0 }} />
+                  <div><div style={{ fontSize: 15, fontWeight: 700 }}>{a.label}</div><div style={{ fontSize: 13, color: activity === a.v ? "rgba(0,0,0,0.6)" : MUTE }}>{a.desc}</div></div>
                 </button>
               ))}
             </R>
             <R l="Goal">
-              <div style={{ display: "flex", gap: 8 }}>
+              <div style={{ display: "flex", gap: 10 }}>
                 {GOALS.map(g => (
-                  <button key={g.id} onClick={() => setGoal(g.id)} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, padding: "14px 6px", minHeight: 44, borderRadius: 12, border: "1px solid var(--border)", background: goal === g.id ? ACC : CARD, color: goal === g.id ? WHITE : TXT, cursor: "pointer", fontFamily: "inherit", transition: "all 0.2s ease" }}>
-                    <span style={{ fontSize: 13, fontWeight: 700 }}>{g.label}</span>
-                    <span style={{ fontSize: 11, color: goal === g.id ? "rgba(255,255,255,0.8)" : MUTE }}>{g.offset > 0 ? "+" : ""}{g.offset} cal</span>
+                  <button key={g.id} onClick={() => setGoal(g.id)} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, padding: "16px 8px", minHeight: 44, borderRadius: 16, border: "1px solid var(--border)", background: goal === g.id ? HIGHLIGHT : CARD, color: goal === g.id ? "#000" : TXT, cursor: "pointer", fontFamily: "inherit", transition: "all 0.2s ease" }}>
+                    <span style={{ fontSize: 14, fontWeight: 800 }}>{g.label}</span>
+                    <span style={{ fontSize: 11, color: goal === g.id ? "rgba(0,0,0,0.6)" : MUTE }}>{g.offset > 0 ? "+" : ""}{g.offset} cal</span>
                   </button>
                 ))}
               </div>
             </R>
             <R l="Macro Split">
               {[{ k: "p", l: "Protein", v: prot, c: PROT_COLOR }, { k: "c", l: "Carbs", v: carb, c: CARB_COLOR }, { k: "f", l: "Fat", v: fatP, c: FAT_COLOR }].map(m => (
-                <div key={m.k} style={{ marginBottom: 14 }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, fontWeight: 700, color: MUTE, marginBottom: 6 }}><span>{m.l}</span><span style={{ color: m.c, fontWeight: 800 }}>{m.v}%</span></div>
+                <div key={m.k} style={{ marginBottom: 16 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 14, fontWeight: 700, color: MUTE, marginBottom: 8 }}><span>{m.l}</span><span style={{ color: m.c, fontWeight: 800 }}>{m.v}%</span></div>
                   <input type="range" min={5} max={90} value={m.v} onChange={e => sl(m.k, parseInt(e.target.value))} style={{ width: "100%", accentColor: m.c, cursor: "pointer" }} />
                 </div>
               ))}
@@ -479,7 +481,7 @@ export default function App() {
                 const cB = Math.round(carb / 100 * B);
                 const fB = Math.max(0, B - pB - cB);
                 return (
-                  <div style={{ fontSize: 16, letterSpacing: "1px", lineHeight: 1, marginTop: 4, userSelect: "none" }}>
+                  <div style={{ fontSize: 20, letterSpacing: "1px", lineHeight: 1, marginTop: 8, userSelect: "none" }}>
                     <span style={{ color: PROT_COLOR }}>{"█".repeat(pB)}</span>
                     <span style={{ color: CARB_COLOR }}>{"█".repeat(cB)}</span>
                     <span style={{ color: FAT_COLOR }}>{"█".repeat(fB)}</span>
@@ -491,36 +493,36 @@ export default function App() {
         </div>
 
         <div className="app-right">
-          <div style={cardStyle}>
-            <SH n="3" t="Your Results" />
+          <div style={{ ...cardStyle, background: ACC, color: WHITE, border: "none" }}>
+            <SH n="3" t="Elite Results" />
             {!r ? (
-              <div style={{ textAlign: "center", padding: "36px 16px", color: MUTE }}>
-                <div style={{ fontSize: 34, marginBottom: 10 }}>📊</div>
-                <p style={{ margin: 0, fontSize: 14 }}>Fill in your details above — results update live.</p>
+              <div style={{ textAlign: "center", padding: "36px 16px", color: "rgba(255,255,255,0.6)" }}>
+                <div style={{ fontSize: 42, marginBottom: 12 }}>⚡</div>
+                <p style={{ margin: 0, fontSize: 16, fontWeight: 600 }}>Awaiting performance metrics...</p>
               </div>
             ) : (
               <>
-                <div style={{ borderRadius: 16, padding: "28px 20px", textAlign: "center", marginBottom: 14, background: ACC, color: WHITE, boxShadow: "var(--shadow)" }}>
-                  <span style={{ display: "block", fontSize: 11, fontWeight: 700, opacity: 0.8, letterSpacing: "2px", textTransform: "uppercase", marginBottom: 4 }}>Daily Target</span>
-                  <span style={{ display: "block", fontSize: 54, fontWeight: 900, letterSpacing: "-2px", lineHeight: 1.05 }}><AN value={r.target} cursor /></span>
-                  <span style={{ display: "block", fontSize: 13, opacity: 0.7, marginTop: 4 }}>kcal / day</span>
+                <div style={{ textAlign: "center", marginBottom: 28 }}>
+                  <span style={{ display: "block", fontSize: 13, fontWeight: 800, opacity: 0.8, letterSpacing: "2.5px", textTransform: "uppercase", marginBottom: 8 }}>Target Caloric Intake</span>
+                  <span style={{ display: "block", fontSize: 72, fontWeight: 900, letterSpacing: "-3px", lineHeight: 1 }}><AN value={r.target} cursor /></span>
+                  <span style={{ display: "block", fontSize: 16, opacity: 0.7, marginTop: 8, fontWeight: 600 }}>KCAL / DAY</span>
                 </div>
-                <div style={{ display: "flex", gap: 10, marginBottom: 20 }}>
-                  {[{ l: "BMR", v: r.bmr, t: "At rest" }, { l: "TDEE", v: r.tdee, t: "With activity" }].map(c => (
-                    <div key={c.l} style={{ flex: 1, borderRadius: 12, padding: "16px 12px", textAlign: "center", border: "1px solid var(--border)", background: "var(--input-bg)" }}>
-                      <span style={{ display: "block", fontSize: 10, fontWeight: 700, color: MUTE, letterSpacing: "2px", textTransform: "uppercase", marginBottom: 4 }}>{c.l}</span>
-                      <span style={{ display: "block", fontSize: 26, fontWeight: 900, letterSpacing: "-1px" }}><AN value={c.v} /></span>
-                      <span style={{ display: "block", fontSize: 11, color: MUTE, marginTop: 3 }}>{c.t}</span>
+                <div style={{ display: "flex", gap: 12, marginBottom: 24 }}>
+                  {[{ l: "BMR", v: r.bmr, t: "Base Rate" }, { l: "TDEE", v: r.tdee, t: "Total Burn" }].map(c => (
+                    <div key={c.l} style={{ flex: 1, borderRadius: 16, padding: "20px 14px", textAlign: "center", background: "rgba(255,255,255,0.1)", backdropFilter: "blur(4px)" }}>
+                      <span style={{ display: "block", fontSize: 11, fontWeight: 800, color: HIGHLIGHT, letterSpacing: "2px", textTransform: "uppercase", marginBottom: 4 }}>{c.l}</span>
+                      <span style={{ display: "block", fontSize: 32, fontWeight: 900, letterSpacing: "-1.5px" }}><AN value={c.v} /></span>
+                      <span style={{ display: "block", fontSize: 12, opacity: 0.6, marginTop: 4, fontWeight: 600 }}>{c.t}</span>
                     </div>
                   ))}
                 </div>
-                <div style={{ display: "flex", gap: 8 }}>
+                <div style={{ display: "flex", gap: 10 }}>
                   {[{ l: "Protein", g: r.pG, p: prot, c: PROT_COLOR }, { l: "Carbs", g: r.cG, p: carb, c: CARB_COLOR }, { l: "Fat", g: r.fG, p: fatP, c: FAT_COLOR }].map(m => (
-                    <div key={m.l} style={{ flex: 1, borderRadius: 12, padding: "14px 8px", textAlign: "center", border: "1px solid var(--border)", background: CARD }}>
-                      <div style={{ width: 8, height: 8, borderRadius: "50%", background: m.c, margin: "0 auto 6px" }} />
-                      <span style={{ display: "block", fontSize: 11, fontWeight: 700, color: MUTE }}>{m.l}</span>
-                      <span style={{ display: "block", fontSize: 24, fontWeight: 900, letterSpacing: "-0.8px", lineHeight: 1.1 }}><AN value={m.g} />g</span>
-                      <span style={{ display: "block", fontSize: 10, color: MUTE }}>{m.p}%</span>
+                    <div key={m.l} style={{ flex: 1, borderRadius: 16, padding: "18px 8px", textAlign: "center", background: CARD, color: TXT }}>
+                      <div style={{ width: 10, height: 10, borderRadius: "50%", background: m.c, margin: "0 auto 8px", boxShadow: `0 0 8px ${m.c}` }} />
+                      <span style={{ display: "block", fontSize: 12, fontWeight: 800, color: MUTE, textTransform: "uppercase" }}>{m.l}</span>
+                      <span style={{ display: "block", fontSize: 28, fontWeight: 900, letterSpacing: "-1px", lineHeight: 1.1, margin: "4px 0" }}><AN value={m.g} />g</span>
+                      <span style={{ display: "block", fontSize: 12, fontWeight: 700, color: m.c }}>{m.p}%</span>
                     </div>
                   ))}
                 </div>
@@ -530,84 +532,74 @@ export default function App() {
 
           <div style={cardStyle}>
             <SH n="4" t="Meal Builder" />
-            <p style={{ fontSize: 13, color: MUTE, marginTop: -10, marginBottom: 20 }}>Tap foods to add them. Adjust portions. See your total macros & micronutrients.</p>
-            <R l="Diet"><Tog opts={[{ id: "all", l: "All" }, { id: "vegetarian", l: "Vegetarian" }, { id: "vegan", l: "Vegan" }]} v={diet} s={setDiet} /></R>
-            <R l="Macro"><Tog opts={[{ id: "any", l: "Any" }, { id: "protein", l: "Protein" }, { id: "carbs", l: "Carbs" }, { id: "fat", l: "Fat" }]} v={macroFilter} s={setMacroFilter} /></R>
+            <p style={{ fontSize: 14, color: MUTE, marginTop: -12, marginBottom: 24, fontWeight: 500 }}>Select athletic fuel to analyze nutritional density.</p>
+            <R l="Diet Preference"><Tog opts={[{ id: "all", l: "Standard" }, { id: "vegetarian", l: "Veg" }, { id: "vegan", l: "Vegan" }]} v={diet} s={setDiet} /></R>
+            <R l="Macro Focus"><Tog opts={[{ id: "any", l: "All" }, { id: "protein", l: "Protein" }, { id: "carbs", l: "Carbs" }, { id: "fat", l: "Fat" }]} v={macroFilter} s={setMacroFilter} /></R>
             {availableCats.length > 0 && (
-              <div style={{ marginBottom: 20 }}>
-                <span style={labelStyle}>Category</span>
+              <div style={{ marginBottom: 24 }}>
+                <span style={labelStyle}>Inventory</span>
                 <div className="tabs-scroll">
-                  <div style={{ display: "flex", gap: 6, width: "max-content" }}>
+                  <div style={{ display: "flex", gap: 8, width: "max-content" }}>
                     {availableCats.map(cat => (
-                      <button key={cat.id} onClick={() => setSelectedCat(selectedCat === cat.id ? null : cat.id)} style={{ padding: "10px 14px", minHeight: 44, borderRadius: 10, border: "1px solid var(--border)", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: HEADER_FONT, whiteSpace: "nowrap", background: selectedCat === cat.id ? ACC : CARD, color: selectedCat === cat.id ? WHITE : TXT, transition: "all 0.2s ease" }}>{cat.label}</button>
+                      <button key={cat.id} onClick={() => setSelectedCat(selectedCat === cat.id ? null : cat.id)} style={{ padding: "12px 18px", minHeight: 44, borderRadius: 12, border: "1px solid var(--border)", fontSize: 13, fontWeight: 800, cursor: "pointer", fontFamily: HEADER_FONT, whiteSpace: "nowrap", background: selectedCat === cat.id ? HIGHLIGHT : CARD, color: selectedCat === cat.id ? "#000" : TXT, transition: "all 0.2s ease" }}>{cat.label}</button>
                     ))}
                   </div>
                 </div>
               </div>
             )}
-            <div style={{ marginBottom: 14 }}>
-              <span style={labelStyle}>Sort By</span>
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <div style={{ marginBottom: 16 }}>
+              <span style={labelStyle}>Organization</span>
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                 <select value={sortBy} onChange={e => setSortBy(e.target.value)} style={{ ...inputStyle, flex: 1, background:CARD }}>
-                  <option value="popular_desc">Most Popular</option>
-                  <option value="popular_asc">Least Popular</option>
+                  <option value="popular_desc">Most Utilized</option>
+                  <option value="popular_asc">Emerging</option>
                   <option value="az">A → Z</option>
                   <option value="za">Z → A</option>
                   {macroFilter !== "any" && (
                     <>
-                      <option value="macro_high">Highest {macroFilter.charAt(0).toUpperCase() + macroFilter.slice(1)}</option>
-                      <option value="macro_low">Lowest {macroFilter.charAt(0).toUpperCase() + macroFilter.slice(1)}</option>
+                      <option value="macro_high">Peak {macroFilter.charAt(0).toUpperCase() + macroFilter.slice(1)}</option>
+                      <option value="macro_low">Base {macroFilter.charAt(0).toUpperCase() + macroFilter.slice(1)}</option>
                     </>
                   )}
                 </select>
-                <span style={{ color: MUTE, fontSize: 18, pointerEvents: "none" }}>↕</span>
               </div>
             </div>
-            <div style={{ marginBottom: 12, position: "relative" }}>
-              <input type="text" value={foodSearch} onChange={e => setFoodSearch(e.target.value)} placeholder="Search foods… (e.g. salmon, rice, yogurt)" style={{ ...inputStyle, paddingLeft: 42, background:CARD }} />
-              <span style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", fontSize: 16, color: MUTE, pointerEvents: "none" }}>🔍</span>
-              {foodSearch.length > 0 && <button onClick={() => setFoodSearch("")} style={{ position: "absolute", right: 8, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: MUTE, fontSize: 18, lineHeight: 1, padding: "8px", minWidth: 44, minHeight: 44, display: "flex", alignItems: "center", justifyContent: "center" }}>×</button>}
+            <div style={{ marginBottom: 16, position: "relative" }}>
+              <input type="text" value={foodSearch} onChange={e => setFoodSearch(e.target.value)} placeholder="Search performance database..." style={{ ...inputStyle, paddingLeft: 46, background:CARD }} />
+              <span style={{ position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)", fontSize: 18, color: MUTE, pointerEvents: "none" }}>🔍</span>
+              {foodSearch.length > 0 && <button onClick={() => setFoodSearch("")} style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: MUTE, fontSize: 20, lineHeight: 1, padding: "10px", minWidth: 44, minHeight: 44, display: "flex", alignItems: "center", justifyContent: "center" }}>×</button>}
             </div>
-            {showSearch && displayFoods.length > 0 && <p style={{ fontSize: 12, color: MUTE, marginBottom: 12 }}>{displayFoods.length} result{displayFoods.length === 1 ? "" : "s"} for &ldquo;{foodSearch}&rdquo;</p>}
-            {foodsLoading && <div style={{ textAlign: "center", padding: "36px 16px", color: MUTE }}><div style={{ fontSize: 28, marginBottom: 10 }}>⏳</div><p style={{ margin: 0, fontSize: 14 }}>Loading food database…</p></div>}
-            {!foodsLoading && groupedFoods.length === 0 && <p style={{ fontSize: 14, color: MUTE, textAlign: "center", padding: "24px 0", margin: 0 }}>No foods match your filters. Try adjusting your selection.</p>}
             {!foodsLoading && groupedFoods.map(group => (
               <div key={group.label}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: group.isFavs ? ACC : MUTE, letterSpacing: "2px", textTransform: "uppercase", margin: "20px 0 10px", paddingBottom: 6, borderBottom: `1px solid var(--border)`, display: "flex", alignItems: "center", gap: 6 }}>
-                  {group.isFavs && <span>★</span>}{group.label}
+                <div style={{ fontSize: 12, fontWeight: 800, color: group.isFavs ? ACC : MUTE, letterSpacing: "2.5px", textTransform: "uppercase", margin: "28px 0 14px", paddingBottom: 8, borderBottom: `2px solid ${group.isFavs ? HIGHLIGHT : "var(--border)"}`, display: "flex", alignItems: "center", gap: 8 }}>
+                  {group.isFavs && <span style={{color:HIGHLIGHT}}>★</span>}{group.label}
                 </div>
                 {group.foods.map(food => {
                   const selected = meal[food.id] !== undefined;
                   const g = meal[food.id] || 0;
                   return (
-                    <div key={food.id} style={{ borderRadius: 12, padding: "12px 16px", marginBottom: 8, background: CARD, transition: "all 0.2s ease", border: selected ? "2px solid " + ACC : "1px solid var(--border)", boxShadow: selected ? "var(--shadow)" : "none" }}>
+                    <div key={food.id} className="food-card" style={{ borderRadius: 16, padding: "16px 20px", marginBottom: 10, background: CARD, border: selected ? "2px solid " + HIGHLIGHT : "1px solid var(--border)", boxShadow: selected ? "0 8px 20px -4px rgba(163,230,53,0.3)" : "none" }}>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer" }} onClick={() => toggleFood(food.id, food)}>
                         <div style={{ flex: 1, minWidth: 0 }}>
                           {macroFilter === "any" ? (
-                            <div style={{ display: "flex", gap: 12, marginTop: 4, flexWrap: "wrap" }}>
-                              <span style={{ fontSize: 14, fontWeight: 700, display:"block", width:"100%" }}>{food.name}</span>
-                              <span style={{ fontSize: 11, color: MUTE, fontFamily: NUM_FONT }}><b style={{ color: TXT }}>{food.per100.cal}</b> cal</span>
-                              <span style={{ fontSize: 11, color: MUTE, fontFamily: NUM_FONT }}><b style={{ color: TXT }}>{food.per100.protein}g</b> <span style={{ color: PROT_COLOR, fontWeight: 700 }}>P</span></span>
-                              <span style={{ fontSize: 11, color: MUTE, fontFamily: NUM_FONT }}><b style={{ color: TXT }}>{food.per100.carbs}g</b> <span style={{ color: CARB_COLOR, fontWeight: 700 }}>C</span></span>
-                              <span style={{ fontSize: 11, color: MUTE, fontFamily: NUM_FONT }}><b style={{ color: TXT }}>{food.per100.fat}g</b> <span style={{ color: FAT_COLOR, fontWeight: 700 }}>F</span></span>
+                            <div style={{ display: "flex", gap: 14, marginTop: 4, flexWrap: "wrap" }}>
+                              <span style={{ fontSize: 16, fontWeight: 800, display:"block", width:"100%", letterSpacing: "-0.3px" }}>{food.name}</span>
+                              <span style={{ fontSize: 12, color: MUTE, fontFamily: NUM_FONT, fontWeight: 600 }}><b style={{ color: TXT }}>{food.per100.cal}</b> CAL</span>
+                              <span style={{ fontSize: 12, color: MUTE, fontFamily: NUM_FONT, fontWeight: 600 }}><b style={{ color: TXT }}>{food.per100.protein}G</b> <span style={{ color: PROT_COLOR, fontWeight: 800 }}>P</span></span>
+                              <span style={{ fontSize: 12, color: MUTE, fontFamily: NUM_FONT, fontWeight: 600 }}><b style={{ color: TXT }}>{food.per100.carbs}G</b> <span style={{ color: CARB_COLOR, fontWeight: 800 }}>C</span></span>
+                              <span style={{ fontSize: 12, color: MUTE, fontFamily: NUM_FONT, fontWeight: 600 }}><b style={{ color: TXT }}>{food.per100.fat}G</b> <span style={{ color: FAT_COLOR, fontWeight: 800 }}>F</span></span>
                             </div>
                           ) : (
                             <>
-                              <span style={{ fontSize: 14, fontWeight: 700 }}>{food.name}</span>
-                              <div style={{ display: "flex", alignItems: "baseline", gap: 5, marginTop: 4 }}>
-                                <span style={{ fontSize: 20, fontWeight: 900, color: TXT, fontFamily: NUM_FONT, lineHeight: 1 }}>{food.per100[macroFilter]}g</span>
-                                <span style={{ fontSize: 12, color: MUTE }}>{macroFilter} per 100g</span>
-                              </div>
-                              <div style={{ display: "flex", gap: 10, marginTop: 3, flexWrap: "wrap" }}>
-                                {macroFilter !== "protein" && <span style={{ fontSize: 11, color: MUTE, fontFamily: NUM_FONT }}><b style={{ color: TXT }}>{food.per100.protein}g</b> <span style={{ color: PROT_COLOR, fontWeight: 700 }}>P</span></span>}
-                                {macroFilter !== "carbs" && <span style={{ fontSize: 11, color: MUTE, fontFamily: NUM_FONT }}><b style={{ color: TXT }}>{food.per100.carbs}g</b> <span style={{ color: CARB_COLOR, fontWeight: 700 }}>C</span></span>}
-                                {macroFilter !== "fat" && <span style={{ fontSize: 11, color: MUTE, fontFamily: NUM_FONT }}><b style={{ color: TXT }}>{food.per100.fat}g</b> <span style={{ color: FAT_COLOR, fontWeight: 700 }}>F</span></span>}
-                                <span style={{ fontSize: 11, color: MUTE, fontFamily: NUM_FONT }}><b style={{ color: TXT }}>{food.per100.cal}</b> cal</span>
+                              <span style={{ fontSize: 16, fontWeight: 800, letterSpacing: "-0.3px" }}>{food.name}</span>
+                              <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginTop: 6 }}>
+                                <span style={{ fontSize: 24, fontWeight: 900, color: TXT, fontFamily: NUM_FONT, lineHeight: 1 }}>{food.per100[macroFilter]}g</span>
+                                <span style={{ fontSize: 13, color: MUTE, fontWeight: 700, textTransform: "uppercase" }}>{macroFilter} / 100g</span>
                               </div>
                             </>
                           )}
                         </div>
-                        <div style={{ width: 28, height: 28, borderRadius: 8, background: selected ? ACC : "var(--input-bg)", color: selected ? WHITE : MUTE, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 16, flexShrink: 0 }}>{selected ? "✓" : "+"}</div>
+                        <div style={{ width: 32, height: 32, borderRadius: 10, background: selected ? HIGHLIGHT : "var(--input-bg)", color: selected ? "#000" : MUTE, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 18 }}>{selected ? "✓" : "+"}</div>
                       </div>
                       {selected && (() => {
                         const currentUnit = mealUnits[food.id] || "grams";
@@ -616,18 +608,18 @@ export default function App() {
                         const grams = qty * gramsPerUnit;
                         const unitOptions = ["grams", ...(food.servings || []).map(s => s.unit)];
                         return (
-                          <div style={{ marginTop: 12 }}>
-                            <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                              <input type="number" value={qty} onChange={e => setGrams(food.id, e.target.value)} min="0" step="0.5" style={{ ...inputStyle, width: 80, padding: "10px 8px", fontSize: 16, textAlign: "center", flexShrink: 0, background:CARD }} />
-                              <select value={currentUnit} onChange={e => setFoodUnit(food.id, e.target.value)} style={{ ...inputStyle, flex: 1, padding: "10px 8px", minHeight: 44, fontSize: 13, background:CARD }}>{unitOptions.map(u => <option key={u} value={u}>{u}</option>)}</select>
+                          <div style={{ marginTop: 16, padding: "16px", background: "var(--input-bg)", borderRadius: 12 }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+                              <input type="number" value={qty} onChange={e => setGrams(food.id, e.target.value)} min="0" step="0.5" style={{ ...inputStyle, width: 90, background:CARD, textAlign: "center" }} />
+                              <select value={currentUnit} onChange={e => setFoodUnit(food.id, e.target.value)} style={{ ...inputStyle, flex: 1, background:CARD, fontSize: 14, fontWeight: 700 }}>{unitOptions.map(u => <option key={u} value={u}>{u}</option>)}</select>
                             </div>
-                            {currentUnit !== "grams" && <p style={{ margin: "6px 0 0", fontSize: 11, color: MUTE }}>= <strong style={{ color: TXT }}>{Math.round(grams)}g</strong> total</p>}
+                            {currentUnit !== "grams" && <p style={{ margin: "10px 0 0", fontSize: 12, color: MUTE, fontWeight: 600 }}>= <strong style={{ color: TXT, fontFamily: NUM_FONT }}>{Math.round(grams)}g</strong> total mass</p>}
                             {qty > 0 && (
-                              <div style={{ display: "flex", gap: 10, marginTop: 8, flexWrap: "wrap" }}>
-                                <span style={{ fontSize: 12, color: MUTE, fontFamily: NUM_FONT }}><b style={{ color: TXT }}>{Math.round(food.per100.cal * grams / 100)}</b> cal</span>
-                                <span style={{ fontSize: 12, color: MUTE, fontFamily: NUM_FONT }}><b style={{ color: TXT }}>{Math.round(food.per100.protein * grams / 100 * 10) / 10}g</b> <span style={{ color: PROT_COLOR, fontWeight: 700 }}>P</span></span>
-                                <span style={{ fontSize: 12, color: MUTE, fontFamily: NUM_FONT }}><b style={{ color: TXT }}>{Math.round(food.per100.carbs * grams / 100 * 10) / 10}g</b> <span style={{ color: CARB_COLOR, fontWeight: 700 }}>C</span></span>
-                                <span style={{ fontSize: 12, color: MUTE, fontFamily: NUM_FONT }}><b style={{ color: TXT }}>{Math.round(food.per100.fat * grams / 100 * 10) / 10}g</b> <span style={{ color: FAT_COLOR, fontWeight: 700 }}>F</span></span>
+                              <div style={{ display: "flex", gap: 12, marginTop: 12, flexWrap: "wrap" }}>
+                                <span style={{ fontSize: 13, color: MUTE, fontFamily: NUM_FONT, fontWeight: 700 }}><b style={{ color: TXT }}>{Math.round(food.per100.cal * grams / 100)}</b> CAL</span>
+                                <span style={{ fontSize: 13, color: MUTE, fontFamily: NUM_FONT, fontWeight: 700 }}><b style={{ color: TXT }}>{Math.round(food.per100.protein * grams / 100 * 10) / 10}G</b> <span style={{ color: PROT_COLOR, fontWeight: 800 }}>P</span></span>
+                                <span style={{ fontSize: 13, color: MUTE, fontFamily: NUM_FONT, fontWeight: 700 }}><b style={{ color: TXT }}>{Math.round(food.per100.carbs * grams / 100 * 10) / 10}G</b> <span style={{ color: CARB_COLOR, fontWeight: 800 }}>C</span></span>
+                                <span style={{ fontSize: 13, color: MUTE, fontFamily: NUM_FONT, fontWeight: 700 }}><b style={{ color: TXT }}>{Math.round(food.per100.fat * grams / 100 * 10) / 10}G</b> <span style={{ color: FAT_COLOR, fontWeight: 800 }}>F</span></span>
                               </div>
                             )}
                           </div>
@@ -642,8 +634,8 @@ export default function App() {
 
           {hasMeal && (
             <div style={cardStyle}>
-              <SH n="5" t="Your Meal Totals" />
-              <div style={{ marginBottom: 16 }}>
+              <SH n="5" t="Athletic Analysis" />
+              <div style={{ marginBottom: 20 }}>
                 {Object.entries(meal).filter(([, qty]) => qty > 0).map(([id, qty]) => {
                   const food = foodById[id];
                   if (!food) return null;
@@ -652,51 +644,50 @@ export default function App() {
                   const grams = qty * gramsPerUnit;
                   const display = currentUnit === "grams" ? `${grams}g` : `${qty} ${currentUnit} (${Math.round(grams)}g)`;
                   return (
-                    <div key={id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 0", borderBottom: "1px solid var(--border)" }}>
-                      <span style={{ fontSize: 13, fontWeight: 600 }}>{food.name}</span>
-                      <span style={{ fontSize: 13, color: MUTE, fontFamily: NUM_FONT }}>{display} · {Math.round(food.per100.cal * grams / 100)} cal</span>
+                    <div key={id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: "1px solid var(--border)" }}>
+                      <span style={{ fontSize: 15, fontWeight: 700, letterSpacing: "-0.2px" }}>{food.name}</span>
+                      <span style={{ fontSize: 13, color: MUTE, fontFamily: NUM_FONT, fontWeight: 600 }}>{display} · {Math.round(food.per100.cal * grams / 100)} CAL</span>
                     </div>
                   );
                 })}
               </div>
-              <div style={{ display: "flex", gap: 8, marginBottom: 20 }}>
+              <div style={{ display: "flex", gap: 10, marginBottom: 24 }}>
                 {[
                   { l: "Calories", v: Math.round(mt.cal), u: "kcal", target: r?.target },
                   { l: "Protein", v: Math.round(mt.protein), u: "g", target: r?.pG },
                   { l: "Carbs", v: Math.round(mt.carbs), u: "g", target: r?.cG },
                   { l: "Fat", v: Math.round(mt.fat), u: "g", target: r?.fG },
                 ].map(m => (
-                  <div key={m.l} style={{ flex: 1, borderRadius: 12, padding: "14px 6px", textAlign: "center", border: "1px solid var(--border)", background: "var(--input-bg)" }}>
-                    <span style={{ display: "block", fontSize: 10, fontWeight: 700, color: MUTE, letterSpacing: "2px", textTransform: "uppercase" }}>{m.l}</span>
-                    <span style={{ display: "block", fontSize: 20, fontWeight: 900, marginTop: 4, letterSpacing: "-0.5px", fontFamily: NUM_FONT }}>{m.v}</span>
-                    <span style={{ display: "block", fontSize: 10, color: MUTE }}>{m.u}</span>
-                    {m.target && <span style={{ display: "block", fontSize: 10, color: MUTE, marginTop: 2 }}>of {m.target}</span>}
+                  <div key={m.l} style={{ flex: 1, borderRadius: 16, padding: "18px 6px", textAlign: "center", border: "1px solid var(--border)", background: "var(--input-bg)" }}>
+                    <span style={{ display: "block", fontSize: 10, fontWeight: 800, color: MUTE, letterSpacing: "1.5px", textTransform: "uppercase" }}>{m.l}</span>
+                    <span style={{ display: "block", fontSize: 24, fontWeight: 900, margin: "6px 0", letterSpacing: "-0.5px", fontFamily: NUM_FONT }}>{m.v}</span>
+                    <span style={{ display: "block", fontSize: 11, color: MUTE, fontWeight: 700 }}>{m.u}</span>
+                    {m.target && <span style={{ display: "block", fontSize: 10, color: ACC, marginTop: 4, fontWeight: 800 }}>GOAL: {m.target}</span>}
                   </div>
                 ))}
               </div>
-              <span style={labelStyle}>Vitamin & Mineral Coverage</span>
-              <p style={{ fontSize: 12, color: MUTE, marginTop: -2, marginBottom: 14 }}>How much of your daily needs this meal covers</p>
+              <span style={labelStyle}>Nutritional Density Coverage</span>
               {MICRO_KEYS.map(k => {
                 const { pct, w } = pctBar(mt[k], rda[k]);
                 return (
-                  <div key={k} style={{ marginBottom: 12 }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 4 }}>
-                      <span style={{ fontWeight: 700 }}>{MICRO_LABELS[k]}</span>
-                      <span style={{ color: pct >= 100 ? "#10B981" : pct >= 50 ? MUTE : "#EF4444", fontWeight: 700 }}>{Math.round(mt[k] * 10) / 10}{MICRO_UNITS[k]} · {pct}%</span>
+                  <div key={k} style={{ marginBottom: 14 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 6 }}>
+                      <span style={{ fontWeight: 800 }}>{MICRO_LABELS[k]}</span>
+                      <span style={{ color: pct >= 100 ? HIGHLIGHT : pct >= 50 ? MUTE : "#EF4444", fontWeight: 800, fontFamily: NUM_FONT }}>{Math.round(mt[k] * 10) / 10}{MICRO_UNITS[k]} · {pct}%</span>
                     </div>
-                    <div style={{ height: 8, borderRadius: 10, background: "var(--border)", overflow: "hidden" }}>
-                      <div style={{ height: "100%", width: w + "%", background: pct >= 100 ? "#10B981" : pct >= 50 ? ACC : "#EF4444", transition: "width 0.4s ease" }} />
+                    <div style={{ height: 10, borderRadius: 12, background: "var(--border)", overflow: "hidden", boxShadow: "inset 0 1px 2px rgba(0,0,0,0.1)" }}>
+                      <div style={{ height: "100%", width: w + "%", background: pct >= 100 ? HIGHLIGHT : pct >= 50 ? ACC : "#EF4444", transition: "width 0.5s cubic-bezier(0.4, 0, 0.2, 1)", boxShadow: pct >= 100 ? `0 0 12px ${HIGHLIGHT}` : "none" }} />
                     </div>
                   </div>
                 );
               })}
-              <button onClick={() => setMeal({})} style={{ width: "100%", padding: "14px", minHeight: 44, borderRadius: 12, border: "none", background: ACC, color: WHITE, fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: HEADER_FONT, marginTop: 10, boxShadow: "var(--shadow)" }}>Clear Meal</button>
+              <button onClick={() => setMeal({})} style={{ width: "100%", padding: "16px", minHeight: 44, borderRadius: 16, border: "none", background: "#000", color: HIGHLIGHT, fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: HEADER_FONT, marginTop: 12, boxShadow: "0 10px 20px -10px rgba(0,0,0,0.5)", textTransform: "uppercase", letterSpacing: "2px" }}>Reset Performance Log</button>
             </div>
           )}
         </div>
       </div>
 
-      <footer style={{ textAlign: "center", padding: 40, fontSize: 12, color: MUTE, fontFamily: HEADER_FONT, fontWeight: 500 }}>macrocalculatorfree.com · No ads · No data collected · Always free</footer>
+      <footer style={{ textAlign: "center", padding: "60px 40px", fontSize: 13, color: MUTE, fontFamily: HEADER_FONT, fontWeight: 600, letterSpacing: "0.5px" }}>MACROCALCULATORFREE.COM · ELITE ATHLETIC EDITION</footer>
     </div>
   );
 }
@@ -704,21 +695,22 @@ export default function App() {
 /* ── helpers ── */
 function SH({ n, t }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
-      <span style={{ display:"flex", alignItems:"center", justifyContent:"center", width:24, height:24, borderRadius:6, background:ACC, color:WHITE, fontWeight: 800, fontSize: 12, fontFamily: NUM_FONT, flexShrink: 0 }}>{n}</span>
-      <h2 style={{ margin: 0, fontSize: 18, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.5px", fontFamily: HEADER_FONT }}>{t}</h2>
+    <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 24 }}>
+      <span style={{ display:"flex", alignItems:"center", justifyContent:"center", width:28, height:28, borderRadius:8, background:HIGHLIGHT, color:"#000", fontWeight: 900, fontSize: 14, fontFamily: NUM_FONT, flexShrink: 0, boxShadow: "0 4px 10px -2px rgba(163,230,53,0.5)" }}>{n}</span>
+      <h2 style={{ margin: 0, fontSize: 20, fontWeight: 800, textTransform: "uppercase", letterSpacing: "1px", fontFamily: HEADER_FONT }}>{t}</h2>
     </div>
   );
 }
 function R({ l, children }) {
-  return <div style={{ marginBottom: 20 }}><span style={{ display: "block", fontSize: 11, fontWeight: 700, color: MUTE, letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 8 }}>{l}</span>{children}</div>;
+  return <div style={{ marginBottom: 24 }}><span style={{ display: "block", fontSize: 12, fontWeight: 800, color: MUTE, letterSpacing: "2px", textTransform: "uppercase", marginBottom: 10 }}>{l}</span>{children}</div>;
 }
 function Tog({ opts, v, s }) {
   return (
-    <div style={{ display: "flex", background: "var(--input-bg)", padding: 4, borderRadius: 12, border: "1px solid var(--border)" }}>
+    <div style={{ display: "flex", background: "var(--input-bg)", padding: 5, borderRadius: 16, border: "1px solid var(--border)" }}>
       {opts.map((o) => (
-        <button key={o.id} onClick={() => s(o.id)} style={{ flex: 1, padding: "8px 4px", minHeight: 36, borderRadius: 8, border: "none", fontSize: 13, fontWeight: 700, cursor: "pointer", transition: "all 0.2s ease", background: v === o.id ? CARD : "transparent", color: v === o.id ? ACC : MUTE, boxShadow: v === o.id ? "var(--shadow)" : "none" }}>{o.l}</button>
+        <button key={o.id} onClick={() => s(o.id)} style={{ flex: 1, padding: "10px 4px", minHeight: 40, borderRadius: 12, border: "none", fontSize: 14, fontWeight: 800, cursor: "pointer", transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)", background: v === o.id ? HIGHLIGHT : "transparent", color: v === o.id ? "#000" : MUTE, boxShadow: v === o.id ? "0 4px 12px -2px rgba(163,230,53,0.4)" : "none" }}>{o.l}</button>
       ))}
     </div>
   );
 }
+

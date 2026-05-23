@@ -1,10 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
 :root {
-  /* Light Mode (Default) */
+  /* Light Mode (Elite Athletic) */
   --bg: #F8FAFC;
   --card-bg: #FFFFFF;
-  --primary-acc: #10B981; /* Health Green */
+  --primary-acc: #047857; /* Deep Forest Jade */
+  --active-highlight: #A3E635; /* Electric Lime */
   --txt: #0F172A;
   --mute: #64748B;
   --border: #E2E8F0;
@@ -21,14 +22,15 @@
 }
 
 [data-theme='dark'] {
-  --bg: #0F172A;
-  --card-bg: #1E293B;
-  --primary-acc: #34D399;
+  --bg: #0B0F19; /* Inky Dark */
+  --card-bg: #151D30;
+  --primary-acc: #059669;
+  --active-highlight: #CCFF00; /* Volt Yellow */
   --txt: #F8FAFC;
   --mute: #94A3B8;
-  --border: #334155;
-  --shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3);
-  --input-bg: #0F172A;
+  --border: #1E293B;
+  --shadow: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.5);
+  --input-bg: #0B0F19;
 }
 
 /* Reset & Baseline */
@@ -83,11 +85,11 @@ input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 18px;
   height: 18px;
-  background: var(--primary-acc);
+  background: var(--active-highlight);
   border-radius: 50%;
   cursor: pointer;
   border: 2px solid var(--card-bg);
-  box-shadow: 0 0 2px rgba(0,0,0,0.2);
+  box-shadow: 0 0 4px rgba(0,0,0,0.3);
 }
 
 /* Scrollables */
@@ -97,6 +99,15 @@ input[type="range"]::-webkit-slider-thumb {
   scrollbar-width: none;
 }
 .tabs-scroll::-webkit-scrollbar { display: none; }
+
+/* Interactive Classes */
+.food-card {
+  transition: transform 0.2s cubic-bezier(0.17, 0.67, 0.83, 0.67), box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.food-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
 
 /* Desktop two-column layout */
 @media (min-width: 1024px) {

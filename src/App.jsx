@@ -518,7 +518,7 @@ export default function App() {
         </div>
 
         <div className="app-right">
-          <div style={{ ...cardStyle, border: "none", background: "var(--input-bg)" }}>
+          <div style={{ ...cardStyle }}>
             <SH n="3" t="Analytics" />
             {!r ? (
               <div style={{ textAlign: "center", padding: "36px 16px", color: MUTE }}>
@@ -527,14 +527,14 @@ export default function App() {
               </div>
             ) : (
               <>
-                <div style={{ textAlign: "center", marginBottom: 40, padding: "32px 20px", borderRadius: 20, background: "var(--target-gradient)" }}>
+                <div style={{ textAlign: "center", marginBottom: 32, padding: "40px 24px", borderRadius: 20, background: "var(--target-gradient)", border: "1px solid var(--border)" }}>
                   <span style={{ display: "block", fontSize: 13, fontWeight: 800, color: MUTE, letterSpacing: "2px", textTransform: "uppercase", marginBottom: 12 }}>Recommended Caloric Intake</span>
-                  <span style={{ display: "block", fontSize: 80, fontWeight: 900, letterSpacing: "-2px", lineHeight: 1, color: "var(--text-main)" }}><AN value={r.target} cursor /></span>
+                  <span style={{ display: "block", fontSize: "clamp(52px, 10vw, 80px)", fontWeight: 900, letterSpacing: "-2px", lineHeight: 1, color: "var(--text-main)" }}><AN value={r.target} cursor /></span>
                   <span style={{ display: "block", fontSize: 16, color: MUTE, marginTop: 12, fontWeight: 700 }}>KCAL / DAY</span>
                 </div>
                 <div style={{ display: "flex", gap: 20, marginBottom: 32 }}>
-                  {[{ l: "BMR", v: r.bmr, t: "Basal" }, { l: "TDEE", v: r.tdee, t: "Burn" }].map(c => (
-                    <div key={c.l} style={{ flex: 1, borderRadius: 16, padding: "20px 14px", textAlign: "center", background: "var(--subcard-bg)" }}>
+                  {[{ l: "BMR", v: r.bmr, t: "Calories at complete rest" }, { l: "TDEE", v: r.tdee, t: "With your activity level" }].map((c, i) => (
+                    <div key={c.l} style={{ flex: 1, borderRadius: 16, padding: "20px 14px", textAlign: "center", background: CARD, border: "1px solid var(--border)", borderTop: i === 0 ? "3px solid var(--prot)" : "3px solid var(--fat)" }}>
                       <span style={{ display: "block", fontSize: 11, fontWeight: 800, color: MUTE, letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 4 }}>{c.l}</span>
                       <span style={{ display: "block", fontSize: 28, fontWeight: 900, letterSpacing: "-1px", color: "var(--text-main)" }}><AN value={c.v} /></span>
                       <span style={{ display: "block", fontSize: 12, opacity: 0.6, marginTop: 4, fontWeight: 600 }}>{c.t}</span>
@@ -543,10 +543,10 @@ export default function App() {
                 </div>
                 <div style={{ display: "flex", gap: 14 }}>
                   {[{ l: "Protein", g: r.pG, p: prot, c: PROT_COLOR }, { l: "Carbs", g: r.cG, p: carb, c: CARB_COLOR }, { l: "Fat", g: r.fG, p: fatP, c: FAT_COLOR }].map(m => (
-                    <div key={m.l} style={{ flex: 1, borderRadius: 18, padding: "20px 10px", textAlign: "center", background: CARD, border: "1px solid var(--border)" }}>
+                    <div key={m.l} style={{ flex: 1, borderRadius: 18, padding: "20px 10px", textAlign: "center", background: CARD, border: "1px solid var(--border)", borderTop: "3px solid " + m.c }}>
                       <div style={{ width: 10, height: 10, borderRadius: "50%", background: m.c, margin: "0 auto 10px" }} />
                       <span style={{ display: "block", fontSize: 12, fontWeight: 800, color: MUTE, textTransform: "uppercase" }}>{m.l}</span>
-                      <span style={{ display: "block", fontSize: 28, fontWeight: 900, letterSpacing: "-1.5px", lineHeight: 1.1, margin: "6px 0", color: ACC }}><AN value={m.g} />g</span>
+                      <span style={{ display: "block", fontSize: 28, fontWeight: 900, letterSpacing: "-1.5px", lineHeight: 1.1, margin: "6px 0", color: m.c }}><AN value={m.g} />g</span>
                       <span style={{ display: "block", fontSize: 13, fontWeight: 800, color: m.c }}>{m.p}%</span>
                     </div>
                   ))}
@@ -555,7 +555,7 @@ export default function App() {
             )}
           </div>
 
-          <div style={cardStyle}>
+          <div style={{ ...cardStyle, marginTop: 8 }}>
             <SH n="4" t="Library" />
             <p style={{ fontSize: 15, color: MUTE, marginTop: -14, marginBottom: 32, fontWeight: 500, lineHeight: 1.6 }}>Track and analyze nutritional density across our refined database.</p>
             <R l="Focus"><Tog opts={[{ id: "all", l: "Standard" }, { id: "vegetarian", l: "Veg" }, { id: "vegan", l: "Vegan" }]} v={diet} s={setDiet} /></R>

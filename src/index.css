@@ -206,3 +206,26 @@ input[type="range"]::-webkit-slider-thumb {
     padding: 32px 16px;
   }
 }
+
+/* Macro card hover lift */
+.macro-card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.macro-card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+}
+
+/* Mobile: stack BMR/TDEE cards on very small screens */
+@media (max-width: 380px) {
+  .bmr-tdee-row {
+    flex-direction: column;
+  }
+  .macro-row {
+    flex-wrap: wrap;
+  }
+  .macro-row > div {
+    flex: 1 1 calc(33% - 10px);
+    min-width: 80px;
+  }
+}

@@ -6,6 +6,7 @@
   --card-bg: #FFFFFF;
   --primary-acc: #1C1C1E; /* Midnight Charcoal */
   --txt: #1C1C1E;
+  --text-main: #1C1C1E;
   --mute: #787880;
   --border: #EFEEEC;
   --shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
@@ -14,6 +15,9 @@
   --prot: #FF2D55; /* Neon Rose */
   --carb: #FF9500; /* Vibrant Tangerine */
   --fat: #AF52DE;  /* Electric Purple */
+
+  --target-gradient: linear-gradient(135deg, rgba(244, 63, 94, 0.08) 0%, rgba(245, 158, 11, 0.08) 50%, rgba(168, 85, 247, 0.08) 100%);
+  --subcard-bg: rgba(0, 0, 0, 0.02);
 
   --font-main: 'Inter', system-ui, -apple-system, sans-serif;
   --font-header: 'Plus Jakarta Sans', sans-serif;
@@ -25,10 +29,14 @@
   --card-bg: #1C1C1E; /* iOS Charcoal Dark */
   --primary-acc: #FFFFFF;
   --txt: #FFFFFF;
+  --text-main: #FFFFFF;
   --mute: #AEAEB2;
   --border: #2C2C2E;
   --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
   --input-bg: #000000;
+
+  --target-gradient: linear-gradient(135deg, rgba(251, 113, 133, 0.15) 0%, rgba(252, 211, 77, 0.15) 50%, rgba(168, 85, 247, 0.2) 100%);
+  --subcard-bg: rgba(255, 255, 255, 0.03);
 }
 
 /* Reset & Baseline */

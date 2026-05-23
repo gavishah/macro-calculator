@@ -527,17 +527,17 @@ export default function App() {
               </div>
             ) : (
               <>
-                <div style={{ textAlign: "center", marginBottom: 40 }}>
-                  <span style={{ display: "block", fontSize: 13, fontWeight: 800, color: MUTE, letterSpacing: "2px", textTransform: "uppercase", marginBottom: 12 }}>Daily Target Intake</span>
-                  <span style={{ display: "block", fontSize: 80, fontWeight: 900, letterSpacing: "-4px", lineHeight: 1, color: ACC }}><AN value={r.target} cursor /></span>
+                <div style={{ textAlign: "center", marginBottom: 40, padding: "32px 20px", borderRadius: 20, background: "var(--target-gradient)" }}>
+                  <span style={{ display: "block", fontSize: 13, fontWeight: 800, color: MUTE, letterSpacing: "2px", textTransform: "uppercase", marginBottom: 12 }}>Recommended Caloric Intake</span>
+                  <span style={{ display: "block", fontSize: 80, fontWeight: 900, letterSpacing: "-2px", lineHeight: 1, color: "var(--text-main)" }}><AN value={r.target} cursor /></span>
                   <span style={{ display: "block", fontSize: 16, color: MUTE, marginTop: 12, fontWeight: 700 }}>KCAL / DAY</span>
                 </div>
                 <div style={{ display: "flex", gap: 20, marginBottom: 32 }}>
                   {[{ l: "BMR", v: r.bmr, t: "Basal" }, { l: "TDEE", v: r.tdee, t: "Burn" }].map(c => (
-                    <div key={c.l} style={{ flex: 1, borderRadius: 18, padding: "24px 16px", textAlign: "center", background: CARD, border: "1px solid var(--border)" }}>
-                      <span style={{ display: "block", fontSize: 12, fontWeight: 800, color: MUTE, letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 6 }}>{c.l}</span>
-                      <span style={{ display: "block", fontSize: 32, fontWeight: 900, letterSpacing: "-1.5px", color: ACC }}><AN value={c.v} /></span>
-                      <span style={{ display: "block", fontSize: 13, color: MUTE, marginTop: 4, fontWeight: 600 }}>{c.t}</span>
+                    <div key={c.l} style={{ flex: 1, borderRadius: 16, padding: "20px 14px", textAlign: "center", background: "var(--subcard-bg)" }}>
+                      <span style={{ display: "block", fontSize: 11, fontWeight: 800, color: MUTE, letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 4 }}>{c.l}</span>
+                      <span style={{ display: "block", fontSize: 28, fontWeight: 900, letterSpacing: "-1px", color: "var(--text-main)" }}><AN value={c.v} /></span>
+                      <span style={{ display: "block", fontSize: 12, opacity: 0.6, marginTop: 4, fontWeight: 600 }}>{c.t}</span>
                     </div>
                   ))}
                 </div>

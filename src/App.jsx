@@ -22,8 +22,8 @@ const MICRO_KEYS = Object.keys(MICRO_LABELS);
 /* ── FORMULAS ── */
 const FORMULAS = [
   { id:"mifflin", name:"Mifflin-St Jeor", badge:"Recommended", who:"Best for most people", detail:"Most clinically validated. Uses age, weight, height & sex.", needsBF:false },
-  { id:"harris",  name:"Harris-Benedict", badge:"Classic", who:"Slightly older formula", detail:"Developed 1919, revised 1984. Still a solid alternative.", needsBF:false },
-  { id:"katch",   name:"Katch-McArdle", badge:"Athletes", who:"Know your body fat %?", detail:"Uses lean body mass — more accurate for muscular individuals.", needsBF:true },
+  { id:"katch", name:"Katch-McArdle", badge:"Athletes", who:"Know your body fat %?", detail:"Uses lean body mass — more accurate for muscular individuals.", needsBF:true },
+  { id:"harris", name:"Harris-Benedict", badge:"Legacy", who:"Older reference formula", detail:"Developed 1919, revised 1984. Included for reference — Mifflin is more accurate for most people.", needsBF:false },
 ];
 const ACT = [
   { v:1.2, label:"Sedentary", desc:"Little/no exercise" },

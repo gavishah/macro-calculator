@@ -549,6 +549,56 @@ export default function App() {
                     </div>
                   ))}
                 </div>
+                {r && (
+                  <div style={{ marginTop: 32 }}>
+                    <div style={{
+                      fontSize: 12,
+                      fontWeight: 800,
+                      color: MUTE,
+                      letterSpacing: "1px",
+                      textTransform: "uppercase",
+                      marginBottom: 16,
+                      paddingBottom: 10,
+                      borderBottom: "1px solid var(--border)",
+                      fontFamily: HEADER_FONT
+                    }}>
+                      Daily Micronutrient Targets
+                    </div>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px 24px" }}>
+                      {MICRO_KEYS.map(k => (
+                        <div key={k} style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          padding: "8px 0",
+                          borderBottom: "1px solid var(--border)"
+                        }}>
+                          <span style={{
+                            fontSize: 13,
+                            fontWeight: 600,
+                            color: TXT
+                          }}>{MICRO_LABELS[k]}</span>
+                          <span style={{
+                            fontSize: 13,
+                            fontWeight: 800,
+                            color: MUTE,
+                            fontFamily: NUM_FONT
+                          }}>{rda[k]}{MICRO_UNITS[k]}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <p style={{
+                      fontSize: 11,
+                      color: MUTE,
+                      marginTop: 12,
+                      marginBottom: 0,
+                      lineHeight: 1.5,
+                      fontStyle: "italic"
+                    }}>
+                      Reference Daily Intake values based on your sex. Individual needs may vary — consult a registered dietitian for personalised guidance.
+                    </p>
+                  </div>
+                )}
               </>
             )}
           </div>

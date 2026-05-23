@@ -145,6 +145,10 @@ export default function App() {
   const [foodSearch, setFoodSearch] = useState("");
   const [sortBy, setSortBy] = useState("popular_desc");
 
+  // Feedback state
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [feedbackText, setFeedbackText] = useState("");
+
   // Day/Night theme switching
   useEffect(() => {
     const hour = new Date().getHours();
@@ -413,12 +417,32 @@ export default function App() {
   return (
     <div style={{ minHeight: "100vh", background: BG, fontFamily: HEADER_FONT, color: TXT, WebkitFontSmoothing: "antialiased", MozOsxFontSmoothing: "grayscale" }}>
 
-      <header style={{ maxWidth: 1200, margin: "0 auto", padding: "32px 24px 12px", display: "flex", alignItems: "center", gap: 16 }}>
-        <div style={{ width: 52, height: 52, borderRadius: 14, background: ACC, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 26, color: WHITE, boxShadow: "0 8px 16px -4px rgba(4,120,87,0.4)" }}>M</div>
-        <div>
-          <h1 className="typewriter-title" style={{ margin: 0, fontSize: 24, fontWeight: 800, letterSpacing: "-0.5px" }}>Macro Calculator</h1>
-          <p style={{ margin: 0, fontSize: 13, color: MUTE, fontWeight: 500 }}>Elite Performance · No login · Free</p>
+      <header style={{ maxWidth: 1200, margin: "0 auto", padding: "32px 24px 12px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <div style={{ width: 52, height: 52, borderRadius: 14, background: ACC, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 26, color: WHITE, boxShadow: "0 8px 16px -4px rgba(4,120,87,0.4)" }}>M</div>
+          <div>
+            <h1 className="typewriter-title" style={{ margin: 0, fontSize: 24, fontWeight: 800, letterSpacing: "-0.5px" }}>Macro Calculator</h1>
+            <p style={{ margin: 0, fontSize: 13, color: MUTE, fontWeight: 500 }}>Elite Performance · No login · Free</p>
+          </div>
         </div>
+        <button 
+          onClick={() => setShowFeedback(true)}
+          style={{ 
+            fontSize: 12, 
+            fontWeight: 700, 
+            color: MUTE, 
+            padding: "8px 16px", 
+            borderRadius: 10, 
+            border: "1px solid var(--border)", 
+            background: CARD,
+            cursor: "pointer",
+            transition: "all 0.2s ease"
+          }}
+          onMouseEnter={(e) => { e.target.style.borderColor = ACC; e.target.style.color = TXT; }}
+          onMouseLeave={(e) => { e.target.style.borderColor = "var(--border)"; e.target.style.color = MUTE; }}
+        >
+          Give Feedback
+        </button>
       </header>
 
       <div className="app-layout">
@@ -688,6 +712,42 @@ export default function App() {
       </div>
 
       <footer style={{ textAlign: "center", padding: "60px 40px", fontSize: 13, color: MUTE, fontFamily: HEADER_FONT, fontWeight: 600, letterSpacing: "0.5px" }}>MACROCALCULATORFREE.COM · ELITE ATHLETIC EDITION</footer>
+
+      {/* FEEDBACK MODAL */}
+      {showFeedback && (
+        <div className="modal-overlay" onClick={() => setShowFeedback(false)}>
+          <div className="modal-card" onClick={e => e.stopPropagation()}>
+            <h2 style={{ margin: 0, fontSize: 20, fontWeight: 800, fontFamily: HEADER_FONT }}>Share Your Feedback</h2>
+            <p style={{ fontSize: 14, color: MUTE, marginTop: 8 }}>Help us improve the elite calculator experience.</p>
+            
+            <textarea
+              className="modal-textarea"
+              placeholder="Tell us what you'd like to see or report an issue..."
+              value={feedbackText}
+              onChange={e => setFeedbackText(e.target.value)}
+            />
+
+            <div style={{ display: "flex", gap: 12 }}>
+              <button 
+                onClick={() => { setShowFeedback(false); setFeedbackText(""); }}
+                style={{ flex: 1, padding: "12px", borderRadius: 12, border: "1px solid var(--border)", background: "var(--input-bg)", color: TXT, fontWeight: 700, cursor: "pointer" }}
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={() => {
+                  window.location.href = 'mailto:gavishah21@gmail.com?subject=Macro Calculator Feedback&body=' + encodeURIComponent(feedbackText);
+                  setShowFeedback(false);
+                  setFeedbackText("");
+                }}
+                style={{ flex: 2, padding: "12px", borderRadius: 12, border: "none", background: ACC, color: WHITE, fontWeight: 800, cursor: "pointer", boxShadow: "0 4px 12px -2px rgba(4,120,87,0.3)" }}
+              >
+                Send Feedback
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

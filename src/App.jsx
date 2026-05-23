@@ -136,6 +136,7 @@ export default function App() {
   const [macroFilter, setMacroFilter] = useState("any");
   const [selectedCat, setSelectedCat] = useState(null);
   const [meal, setMeal] = useState({});
+  const [mealUnits, setMealUnits] = useState({}); // { foodId: "unit_string" }
 
   /* ── Foods database state ── */
   const [foodsData, setFoodsData] = useState(null);
@@ -161,13 +162,14 @@ export default function App() {
       if (saved.carb     !== undefined) setCarb(saved.carb);
       if (saved.fatP     !== undefined) setFatP(saved.fatP);
       if (saved.diet     !== undefined) setDiet(saved.diet);
+      if (saved.mealUnits !== undefined) setMealUnits(saved.mealUnits);
     } catch {}
   }, []);
 
   /* ── localStorage: save on every change ── */
   useEffect(() => {
-    localStorage.setItem(LS_KEY, JSON.stringify({ age, weight, hFt, hIn, hCm, sex, unit, formula, activity, goal, prot, carb, fatP, diet }));
-  }, [age, weight, hFt, hIn, hCm, sex, unit, formula, activity, goal, prot, carb, fatP, diet]);
+    localStorage.setItem(LS_KEY, JSON.stringify({ age, weight, hFt, hIn, hCm, sex, unit, formula, activity, goal, prot, carb, fatP, diet, mealUnits }));
+  }, [age, weight, hFt, hIn, hCm, sex, unit, formula, activity, goal, prot, carb, fatP, diet, mealUnits]);
 
   /* ── Fetch foods.json on mount ── */
   useEffect(() => {
@@ -275,14 +277,32 @@ export default function App() {
   const r = res();
   const rda = RDA[sex] || RDA.male;
 
+  // Given a food and its current selected unit string, return grams per 1 unit
+  const resolveGrams = (food, unitStr) => {
+    if (!unitStr || unitStr === "grams") return 1; // 1 gram = 1 gram
+    const serving = (food.servings || []).find(s => s.unit === unitStr);
+    return serving ? serving.grams : 1;
+  };
+
+  // Given a food and unit, return total grams for the quantity entered
+  const totalGrams = (food, id) => {
+    const qty = meal[id] || 0;
+    const unitStr = mealUnits[id];
+    const gramsPerUnit = resolveGrams(food, unitStr);
+    return qty * gramsPerUnit;
+  };
+
   /* meal totals — uses foodById from fetched data */
   const mealTotals = useCallback(() => {
     const t = { cal:0, protein:0, carbs:0, fat:0 };
     MICRO_KEYS.forEach(k => t[k] = 0);
-    Object.entries(meal).forEach(([id, grams]) => {
-      if (!grams || grams <= 0) return;
+    Object.entries(meal).forEach(([id, qty]) => {
+      if (!qty || qty <= 0) return;
       const food = foodById[id];
       if (!food) return;
+      const unitStr = mealUnits[id];
+      const gramsPerUnit = resolveGrams(food, unitStr);
+      const grams = qty * gramsPerUnit;
       const m = grams / 100;
       t.cal += food.per100.cal * m;
       t.protein += food.per100.protein * m;
@@ -292,21 +312,37 @@ export default function App() {
     });
     Object.keys(t).forEach(k => t[k] = Math.round(t[k] * 10) / 10);
     return t;
-  }, [meal, foodById]);
+  }, [meal, mealUnits, foodById]);
 
   const mt = mealTotals();
   const hasMeal = Object.values(meal).some(v => v > 0);
 
-  const toggleFood = (id, defaultG) => {
+  const toggleFood = (id, food) => {
     setMeal(prev => {
       const next = { ...prev };
-      if (next[id]) { delete next[id]; } else { next[id] = defaultG || 100; }
+      if (next[id] !== undefined) {
+        delete next[id];
+        setMealUnits(mu => { const n={...mu}; delete n[id]; return n; });
+      } else {
+        // Default quantity = 1, default unit = first serving if available, else "grams"
+        next[id] = 1;
+        const defaultUnit = food.servings && food.servings.length > 0 
+          ? food.servings[0].unit 
+          : "grams";
+        setMealUnits(mu => ({ ...mu, [id]: defaultUnit }));
+      }
       return next;
     });
   };
 
   const setGrams = (id, g) => {
-    setMeal(prev => ({ ...prev, [id]: Math.max(0, parseInt(g) || 0) }));
+    setMeal(prev => ({ ...prev, [id]: Math.max(0, parseFloat(g) || 0) }));
+  };
+
+  const setFoodUnit = (id, unitStr) => {
+    setMealUnits(prev => ({ ...prev, [id]: unitStr }));
+    // Reset quantity to 1 when changing unit
+    setMeal(prev => ({ ...prev, [id]: 1 }));
   };
 
   const pctBar = (val, rdaV) => {
@@ -532,7 +568,7 @@ export default function App() {
                 const g = meal[food.id] || 0;
                 return (
                   <div key={food.id} style={{ borderRadius:16, padding:"14px 16px", marginBottom:10, background:CARD, transition:"all 0.2s", ...(selected?{...neuDn,outline:"2px solid "+ACC}:neuSm) }}>
-                    <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", cursor:"pointer" }} onClick={() => toggleFood(food.id, 100)}>
+                    <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", cursor:"pointer" }} onClick={() => toggleFood(food.id, food)}>
                       <div style={{ flex:1, minWidth:0 }}>
                         {macroFilter === "any" ? (
                           <>
@@ -565,31 +601,101 @@ export default function App() {
                         {selected ? "✓" : "+"}
                       </div>
                     </div>
-                    {selected && (
-                      <div style={{ marginTop:12, display:"flex", alignItems:"center", gap:10 }}>
-                        <span style={{ fontSize:12, fontWeight:700, color:MUTE, flexShrink:0 }}>Grams:</span>
-                        <input type="number" value={g} onChange={e => setGrams(food.id, e.target.value)} style={{ ...inputStyle, width:90, padding:"10px 12px", fontSize:16, textAlign:"center" }} />
-                        <div style={{ fontSize:12, color:MUTE, flexWrap:"wrap", display:"flex", gap:8 }}>
-                          <span><b style={{color:TXT}}>{Math.round(food.per100.cal*g/100)}</b> cal</span>
-                          <span><b style={{color:TXT}}>{Math.round(food.per100.protein*g/100*10)/10}g</b> P</span>
-                          <span><b style={{color:TXT}}>{Math.round(food.per100.carbs*g/100*10)/10}g</b> C</span>
-                          <span><b style={{color:TXT}}>{Math.round(food.per100.fat*g/100*10)/10}g</b> F</span>
+                    {selected && (() => {
+                      const currentUnit = mealUnits[food.id] || "grams";
+                      const gramsPerUnit = resolveGrams(food, currentUnit);
+                      const qty = meal[food.id] || 0;
+                      const grams = qty * gramsPerUnit;
+                      const unitOptions = ["grams", ...(food.servings || []).map(s => s.unit)];
+
+                      return (
+                        <div style={{ marginTop: 12 }}>
+                          {/* Unit selector + quantity input row */}
+                          <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                            {/* Quantity input */}
+                            <input
+                              type="number"
+                              value={qty}
+                              onChange={e => setGrams(food.id, e.target.value)}
+                              min="0"
+                              step="0.5"
+                              style={{
+                                ...inputStyle,
+                                width: 80,
+                                padding: "10px 8px",
+                                fontSize: 16,
+                                textAlign: "center",
+                                flexShrink: 0
+                              }}
+                            />
+
+                            {/* Unit dropdown */}
+                            <select
+                              value={currentUnit}
+                              onChange={e => setFoodUnit(food.id, e.target.value)}
+                              style={{
+                                flex: 1,
+                                padding: "10px 8px",
+                                minHeight: 44,
+                                borderRadius: 0,
+                                border: "none",
+                                borderBottom: "2px solid #1a1a1a",
+                                background: "transparent",
+                                color: TXT,
+                                fontSize: 13,
+                                fontFamily: "inherit",
+                                fontWeight: 600,
+                                outline: "none",
+                                cursor: "pointer",
+                                appearance: "none",
+                                WebkitAppearance: "none"
+                              }}
+                            >
+                              {unitOptions.map(u => (
+                                <option key={u} value={u}>{u}</option>
+                              ))}
+                            </select>
+                          </div>
+
+                          {/* Calculated grams display (when not in grams mode) */}
+                          {currentUnit !== "grams" && (
+                            <p style={{ margin: "6px 0 0", fontSize: 11, color: MUTE }}>
+                              = <strong style={{ color: TXT }}>{Math.round(grams)}g</strong> total
+                            </p>
+                          )}
+
+                          {/* Macro display for this food at this quantity */}
+                          {qty > 0 && (
+                            <div style={{ display:"flex", gap:10, marginTop:8, flexWrap:"wrap" }}>
+                              <span style={{ fontSize:12, color:MUTE }}><b style={{color:TXT}}>{Math.round(food.per100.cal * grams / 100)}</b> cal</span>
+                              <span style={{ fontSize:12, color:MUTE }}><b style={{color:TXT}}>{Math.round(food.per100.protein * grams / 100 * 10)/10}g</b> P</span>
+                              <span style={{ fontSize:12, color:MUTE }}><b style={{color:TXT}}>{Math.round(food.per100.carbs * grams / 100 * 10)/10}g</b> C</span>
+                              <span style={{ fontSize:12, color:MUTE }}><b style={{color:TXT}}>{Math.round(food.per100.fat * grams / 100 * 10)/10}g</b> F</span>
+                            </div>
+                          )}
                         </div>
-                      </div>
-                    )}
-                    {selected && g > 0 && (
-                      <div style={{ marginTop:10, display:"flex", flexWrap:"wrap", gap:6 }}>
-                        {MICRO_KEYS.filter(k => food.per100[k] > 0).map(k => {
-                          const val = Math.round(food.per100[k] * g / 100 * 10) / 10;
-                          const pct = Math.round((val / rda[k]) * 100);
-                          return (
-                            <span key={k} style={{ fontSize:10, padding:"3px 7px", borderRadius:8, background:pct>=20?"#ddd":"#e8e8e8", color:pct>=20?ACC:MUTE, fontWeight:600 }}>
-                              {MICRO_LABELS[k].split(" ").pop()} {val}{MICRO_UNITS[k]} ({pct}%)
-                            </span>
-                          );
-                        })}
-                      </div>
-                    )}
+                      );
+                    })()}
+                    {selected && (() => {
+                      const currentUnit = mealUnits[food.id] || "grams";
+                      const gramsPerUnit = resolveGrams(food, currentUnit);
+                      const qty = meal[food.id] || 0;
+                      const grams = qty * gramsPerUnit;
+                      if (grams <= 0) return null;
+                      return (
+                        <div style={{ marginTop:10, display:"flex", flexWrap:"wrap", gap:6 }}>
+                          {MICRO_KEYS.filter(k => food.per100[k] > 0).map(k => {
+                            const val = Math.round(food.per100[k] * grams / 100 * 10) / 10;
+                            const pct = Math.round((val / rda[k]) * 100);
+                            return (
+                              <span key={k} style={{ fontSize:10, padding:"3px 7px", borderRadius:8, background:pct>=20?"#ddd":"#e8e8e8", color:pct>=20?ACC:MUTE, fontWeight:600 }}>
+                                {MICRO_LABELS[k].split(" ").pop()} {val}{MICRO_UNITS[k]} ({pct}%)
+                              </span>
+                            );
+                          })}
+                        </div>
+                      );
+                    })()}
                   </div>
                 );
               })}
@@ -604,14 +710,21 @@ export default function App() {
 
             {/* selected foods summary */}
             <div style={{ marginBottom: 16 }}>
-              {Object.entries(meal).filter(([,g])=>g>0).map(([id,g]) => {
+              {Object.entries(meal).filter(([,qty])=>qty>0).map(([id,qty]) => {
                 const food = foodById[id];
-                return food ? (
-                  <div key={id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 0", borderBottom: "1px solid #e4e4e7" }}>
-                    <span style={{ fontSize: 13, fontWeight: 600 }}>{food.name}</span>
-                    <span style={{ fontSize: 13, color: MUTE }}>{g}g · {Math.round(food.per100.cal*g/100)} cal</span>
+                if (!food) return null;
+                const currentUnit = mealUnits[id] || "grams";
+                const gramsPerUnit = resolveGrams(food, currentUnit);
+                const grams = qty * gramsPerUnit;
+                const display = currentUnit === "grams" 
+                  ? `${grams}g` 
+                  : `${qty} ${currentUnit} (${Math.round(grams)}g)`;
+                return (
+                  <div key={id} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"8px 0", borderBottom:"1px solid #e4e4e7" }}>
+                    <span style={{ fontSize:13, fontWeight:600 }}>{food.name}</span>
+                    <span style={{ fontSize:13, color:MUTE }}>{display} · {Math.round(food.per100.cal * grams / 100)} cal</span>
                   </div>
-                ) : null;
+                );
               })}
             </div>
 

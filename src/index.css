@@ -1,4 +1,37 @@
-/* Reset & Cross-browser baseline */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+:root {
+  /* Light Mode (Default) */
+  --bg: #F8FAFC;
+  --card-bg: #FFFFFF;
+  --primary-acc: #10B981; /* Health Green */
+  --txt: #0F172A;
+  --mute: #64748B;
+  --border: #E2E8F0;
+  --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --input-bg: #F1F5F9;
+  
+  --prot: #EF4444;
+  --carb: #F59E0B;
+  --fat: #3B82F6;
+
+  --font-main: 'Inter', system-ui, sans-serif;
+  --font-header: 'Plus Jakarta Sans', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+}
+
+[data-theme='dark'] {
+  --bg: #0F172A;
+  --card-bg: #1E293B;
+  --primary-acc: #34D399;
+  --txt: #F8FAFC;
+  --mute: #94A3B8;
+  --border: #334155;
+  --shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3);
+  --input-bg: #0F172A;
+}
+
+/* Reset & Baseline */
 *, *::before, *::after {
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
@@ -7,115 +40,92 @@
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
-  -ms-text-size-adjust: 100%;
 }
 
 body {
   margin: 0;
   padding: 0;
+  background-color: var(--bg);
+  color: var(--txt);
+  font-family: var(--font-main);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Prevent iOS Safari zoom on input focus */
-input[type="number"],
-input[type="text"],
-select,
-textarea {
-  font-size: 16px !important;
-}
-
-/* Fix input appearance across browsers */
+/* Form Elements */
 input, select, button {
+  font-family: inherit;
+  font-size: 16px;
   -webkit-appearance: none;
-  -moz-appearance: none;
   appearance: none;
 }
 
-/* Custom select arrow for all browsers */
+/* Custom Select Arrow */
 select {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M6 8L1 3h10z' fill='%23111827'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M6 8L1 3h10z' fill='%2364748B'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 12px center;
   padding-right: 32px !important;
 }
 
-/* Range slider styling */
+/* Range Slider */
 input[type="range"] {
   -webkit-appearance: none;
-  appearance: none;
   width: 100%;
-  height: 4px;
-  background: #E5E7EB;
+  height: 6px;
+  background: var(--border);
+  border-radius: 10px;
   outline: none;
-  border: 1px solid #111827;
 }
 
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  background: #111827;
+  width: 18px;
+  height: 18px;
+  background: var(--primary-acc);
+  border-radius: 50%;
   cursor: pointer;
-  border: 2px solid #111827;
+  border: 2px solid var(--card-bg);
+  box-shadow: 0 0 2px rgba(0,0,0,0.2);
 }
 
-input[type="range"]::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  background: #111827;
-  cursor: pointer;
-  border: 2px solid #111827;
-  border-radius: 0;
-}
-
-/* Scrollbar styling for category chips */
+/* Scrollables */
 .tabs-scroll {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-  -ms-overflow-style: none;
 }
-.tabs-scroll::-webkit-scrollbar {
-  display: none;
-}
+.tabs-scroll::-webkit-scrollbar { display: none; }
 
 /* Desktop two-column layout */
 @media (min-width: 1024px) {
   .app-layout {
     display: grid;
-    grid-template-columns: 2fr 3fr;
-    gap: 20px;
+    grid-template-columns: 420px 1fr;
+    gap: 24px;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 24px;
     align-items: start;
   }
   .app-left {
     position: sticky;
-    top: 20px;
-    max-height: calc(100vh - 40px);
+    top: 24px;
+    max-height: calc(100vh - 48px);
     overflow-y: auto;
-    scrollbar-width: thin;
+    padding-right: 4px;
   }
-  .app-right {
-    min-height: 0;
-  }
+  /* Custom scrollbar for sticky left */
+  .app-left::-webkit-scrollbar { width: 4px; }
+  .app-left::-webkit-scrollbar-track { background: transparent; }
+  .app-left::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
 }
 
-/* Tablet */
-@media (min-width: 768px) and (max-width: 1023px) {
+@media (max-width: 1023px) {
   .app-layout {
-    max-width: 768px;
+    max-width: 640px;
     margin: 0 auto;
     padding: 16px;
-  }
-}
-
-/* Mobile */
-@media (max-width: 767px) {
-  .app-layout {
-    padding: 12px;
   }
 }

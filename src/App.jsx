@@ -103,17 +103,17 @@ function AN({ value, cursor = false }) {
 /* ═══════════════════════════════════════════
    STYLES
 ═══════════════════════════════════════════ */
-const BG = "#F4F4F0";
-const CARD = "#FFFFFF";
-const TXT = "#111827";
-const MUTE = "#6B7280";
-const ACC = "#111827";
+const BG = "var(--bg)";
+const CARD = "var(--card-bg)";
+const TXT = "var(--txt)";
+const MUTE = "var(--mute)";
+const ACC = "var(--primary-acc)";
 const WHITE = "#FFFFFF";
-const NUM_FONT = "'IBM Plex Mono', 'JetBrains Mono', monospace";
-const HEADER_FONT = "'Space Grotesk', 'Inter', system-ui, sans-serif";
-const PROT_COLOR = "#EF4444";
-const CARB_COLOR = "#F59E0B";
-const FAT_COLOR = "#3B82F6";
+const NUM_FONT = "var(--font-mono)";
+const HEADER_FONT = "var(--font-header)";
+const PROT_COLOR = "var(--prot)";
+const CARB_COLOR = "var(--carb)";
+const FAT_COLOR = "var(--fat)";
 
 /* ═══════════════════════════════════════════
    MAIN APP
@@ -143,6 +143,13 @@ export default function App() {
   const [foodsLoading, setFoodsLoading] = useState(true);
   const [foodSearch, setFoodSearch] = useState("");
   const [sortBy, setSortBy] = useState("popular_desc");
+
+  // Day/Night theme switching
+  useEffect(() => {
+    const hour = new Date().getHours();
+    const isDark = hour >= 20 || hour < 6;
+    document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  }, []);
 
   useEffect(() => {
     try {
@@ -368,18 +375,47 @@ export default function App() {
     return { pct, w };
   };
 
-  const cardStyle = { background: CARD, border: "2px solid " + TXT, borderRadius: 0, padding: "24px 20px", marginBottom: 18 };
-  const inputStyle = { width: "100%", padding: "13px 12px", minHeight: 44, borderRadius: 0, border: "2px solid " + TXT, background: "transparent", color: TXT, fontSize: 16, fontFamily: NUM_FONT, outline: "none", boxSizing: "border-box", fontWeight: 500 };
-  const labelStyle = { display: "block", fontSize: 11, fontWeight: 700, color: MUTE, letterSpacing: "2px", textTransform: "uppercase", marginBottom: 8, fontFamily: HEADER_FONT };
+  const cardStyle = { 
+    background: CARD, 
+    borderRadius: 16, 
+    padding: "24px 20px", 
+    marginBottom: 18, 
+    boxShadow: "var(--shadow)", 
+    border: "1px solid var(--border)" 
+  };
+  const inputStyle = { 
+    width: "100%", 
+    padding: "13px 12px", 
+    minHeight: 44, 
+    borderRadius: 12, 
+    border: "1px solid var(--border)", 
+    background: "var(--input-bg)", 
+    color: TXT, 
+    fontSize: 16, 
+    fontFamily: NUM_FONT, 
+    outline: "none", 
+    boxSizing: "border-box", 
+    fontWeight: 500 
+  };
+  const labelStyle = { 
+    display: "block", 
+    fontSize: 11, 
+    fontWeight: 700, 
+    color: MUTE, 
+    letterSpacing: "2px", 
+    textTransform: "uppercase", 
+    marginBottom: 8, 
+    fontFamily: HEADER_FONT 
+  };
 
   return (
     <div style={{ minHeight: "100vh", background: BG, fontFamily: HEADER_FONT, color: TXT, WebkitFontSmoothing: "antialiased", MozOsxFontSmoothing: "grayscale" }}>
 
       <header style={{ maxWidth: 1200, margin: "0 auto", padding: "24px 20px 8px", display: "flex", alignItems: "center", gap: 14 }}>
-        <div style={{ width: 48, height: 48, borderRadius: 0, background: CARD, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 24, color: ACC, border: "2px solid " + TXT, boxShadow: "4px 4px 0px 0px " + TXT }}>M</div>
+        <div style={{ width: 48, height: 48, borderRadius: 12, background: ACC, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 24, color: WHITE, boxShadow: "var(--shadow)" }}>M</div>
         <div>
-          <h1 className="typewriter-title" style={{ margin: 0, fontSize: 22, fontWeight: 700 }}>Macro Calculator</h1>
-          <p style={{ margin: 0, fontSize: 12, color: MUTE }}>Free · No login · No tracking · No ads</p>
+          <h1 className="typewriter-title" style={{ margin: 0, fontSize: 22, fontWeight: 800 }}>Macro Calculator</h1>
+          <p style={{ margin: 0, fontSize: 12, color: MUTE, fontWeight: 500 }}>Free · No login · No tracking · No ads</p>
         </div>
       </header>
 
@@ -388,14 +424,14 @@ export default function App() {
           <div style={cardStyle}>
             <SH n="1" t="Choose Your Formula" />
             {FORMULAS.map(f => (
-              <button key={f.id} onClick={() => setFormula(f.id)} style={{ display: "block", width: "100%", position: "relative", borderRadius: 0, padding: 16, textAlign: "left", cursor: "pointer", border: "2px solid " + TXT, fontFamily: "inherit", marginBottom: 10, background: formula === f.id ? ACC : CARD, color: formula === f.id ? WHITE : TXT, transition: "all 0.1s ease", boxShadow: formula === f.id ? "none" : "4px 4px 0px 0px " + TXT }}>
+              <button key={f.id} onClick={() => setFormula(f.id)} style={{ display: "block", width: "100%", position: "relative", borderRadius: 12, padding: 16, textAlign: "left", cursor: "pointer", border: "1px solid var(--border)", fontFamily: "inherit", marginBottom: 10, background: formula === f.id ? ACC : CARD, color: formula === f.id ? WHITE : TXT, transition: "all 0.2s ease" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
                   <span style={{ fontSize: 15, fontWeight: 800 }}>{f.name}</span>
-                  <span style={{ fontSize: 10, fontWeight: 800, padding: "3px 8px", borderRadius: 0, background: formula === f.id ? WHITE : "#ddd", color: formula === f.id ? ACC : MUTE, border: formula === f.id ? "none" : "1px solid " + MUTE }}>{f.badge}</span>
+                  <span style={{ fontSize: 10, fontWeight: 800, padding: "3px 8px", borderRadius: 6, background: formula === f.id ? "rgba(255,255,255,0.2)" : "var(--input-bg)", color: formula === f.id ? WHITE : MUTE }}>{f.badge}</span>
                 </div>
-                <p style={{ margin: "0 0 2px", fontSize: 13, fontWeight: 600, color: formula === f.id ? "rgba(255,255,255,0.65)" : MUTE }}>{f.who}</p>
-                <p style={{ margin: 0, fontSize: 12, color: formula === f.id ? "rgba(255,255,255,0.5)" : MUTE }}>{f.detail}</p>
-                {formula === f.id && <div style={{ position: "absolute", top: 14, right: 14, width: 24, height: 24, borderRadius: 0, background: WHITE, color: ACC, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 12 }}>✓</div>}
+                <p style={{ margin: "0 0 2px", fontSize: 13, fontWeight: 600, color: formula === f.id ? "rgba(255,255,255,0.8)" : MUTE }}>{f.who}</p>
+                <p style={{ margin: 0, fontSize: 12, color: formula === f.id ? "rgba(255,255,255,0.6)" : MUTE }}>{f.detail}</p>
+                {formula === f.id && <div style={{ position: "absolute", top: 14, right: 14, width: 24, height: 24, borderRadius: "50%", background: WHITE, color: ACC, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 12 }}>✓</div>}
               </button>
             ))}
           </div>
@@ -414,18 +450,18 @@ export default function App() {
             {needsBF && <R l="Body Fat %"><input type="number" value={bf} onChange={e => setBf(e.target.value)} placeholder="e.g. 15" style={inputStyle} /></R>}
             <R l="Activity Level">
               {ACT.map(a => (
-                <button key={a.v} onClick={() => setActivity(a.v)} style={{ display: "flex", gap: 10, alignItems: "center", padding: "12px 14px", minHeight: 44, borderRadius: 0, border: "2px solid " + TXT, background: activity === a.v ? ACC : CARD, color: activity === a.v ? WHITE : TXT, cursor: "pointer", textAlign: "left", fontFamily: "inherit", width: "100%", marginBottom: 8, transition: "all 0.1s ease", boxShadow: activity === a.v ? "none" : "3px 3px 0px 0px " + TXT }}>
-                  <div style={{ width: 8, height: 8, borderRadius: 0, background: activity === a.v ? WHITE : MUTE, flexShrink: 0 }} />
-                  <div><div style={{ fontSize: 14, fontWeight: 700 }}>{a.label}</div><div style={{ fontSize: 12, color: activity === a.v ? "rgba(255,255,255,0.65)" : MUTE }}>{a.desc}</div></div>
+                <button key={a.v} onClick={() => setActivity(a.v)} style={{ display: "flex", gap: 10, alignItems: "center", padding: "12px 14px", minHeight: 44, borderRadius: 12, border: "1px solid var(--border)", background: activity === a.v ? ACC : CARD, color: activity === a.v ? WHITE : TXT, cursor: "pointer", textAlign: "left", fontFamily: "inherit", width: "100%", marginBottom: 8, transition: "all 0.2s ease" }}>
+                  <div style={{ width: 10, height: 10, borderRadius: "50%", background: activity === a.v ? WHITE : "var(--border)", flexShrink: 0 }} />
+                  <div><div style={{ fontSize: 14, fontWeight: 700 }}>{a.label}</div><div style={{ fontSize: 12, color: activity === a.v ? "rgba(255,255,255,0.8)" : MUTE }}>{a.desc}</div></div>
                 </button>
               ))}
             </R>
             <R l="Goal">
               <div style={{ display: "flex", gap: 8 }}>
                 {GOALS.map(g => (
-                  <button key={g.id} onClick={() => setGoal(g.id)} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, padding: "14px 6px", minHeight: 44, borderRadius: 0, border: "2px solid " + TXT, background: goal === g.id ? ACC : CARD, color: goal === g.id ? WHITE : TXT, cursor: "pointer", fontFamily: "inherit", transition: "all 0.1s ease", boxShadow: goal === g.id ? "none" : "3px 3px 0px 0px " + TXT }}>
-                    <span style={{ fontSize: 13, fontWeight: 700, color: goal === g.id ? WHITE : TXT }}>{g.label}</span>
-                    <span style={{ fontSize: 11, color: goal === g.id ? "rgba(255,255,255,0.65)" : MUTE }}>{g.offset > 0 ? "+" : ""}{g.offset} cal</span>
+                  <button key={g.id} onClick={() => setGoal(g.id)} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, padding: "14px 6px", minHeight: 44, borderRadius: 12, border: "1px solid var(--border)", background: goal === g.id ? ACC : CARD, color: goal === g.id ? WHITE : TXT, cursor: "pointer", fontFamily: "inherit", transition: "all 0.2s ease" }}>
+                    <span style={{ fontSize: 13, fontWeight: 700 }}>{g.label}</span>
+                    <span style={{ fontSize: 11, color: goal === g.id ? "rgba(255,255,255,0.8)" : MUTE }}>{g.offset > 0 ? "+" : ""}{g.offset} cal</span>
                   </button>
                 ))}
               </div>
@@ -433,7 +469,7 @@ export default function App() {
             <R l="Macro Split">
               {[{ k: "p", l: "Protein", v: prot, c: PROT_COLOR }, { k: "c", l: "Carbs", v: carb, c: CARB_COLOR }, { k: "f", l: "Fat", v: fatP, c: FAT_COLOR }].map(m => (
                 <div key={m.k} style={{ marginBottom: 14 }}>
-                  <div style={{ display: "flex", justify: "space-between", fontSize: 13, fontWeight: 700, color: MUTE, marginBottom: 6 }}><span>{m.l}</span><span style={{ color: m.c, fontWeight: 800 }}>{m.v}%</span></div>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, fontWeight: 700, color: MUTE, marginBottom: 6 }}><span>{m.l}</span><span style={{ color: m.c, fontWeight: 800 }}>{m.v}%</span></div>
                   <input type="range" min={5} max={90} value={m.v} onChange={e => sl(m.k, parseInt(e.target.value))} style={{ width: "100%", accentColor: m.c, cursor: "pointer" }} />
                 </div>
               ))}
@@ -464,14 +500,14 @@ export default function App() {
               </div>
             ) : (
               <>
-                <div style={{ borderRadius: 0, padding: "28px 20px", textAlign: "center", marginBottom: 14, background: ACC, color: WHITE, border: "2px solid " + TXT }}>
-                  <span style={{ display: "block", fontSize: 11, fontWeight: 700, opacity: 0.7, letterSpacing: "2px", textTransform: "uppercase", marginBottom: 4 }}>Daily Target</span>
+                <div style={{ borderRadius: 16, padding: "28px 20px", textAlign: "center", marginBottom: 14, background: ACC, color: WHITE, boxShadow: "var(--shadow)" }}>
+                  <span style={{ display: "block", fontSize: 11, fontWeight: 700, opacity: 0.8, letterSpacing: "2px", textTransform: "uppercase", marginBottom: 4 }}>Daily Target</span>
                   <span style={{ display: "block", fontSize: 54, fontWeight: 900, letterSpacing: "-2px", lineHeight: 1.05 }}><AN value={r.target} cursor /></span>
-                  <span style={{ display: "block", fontSize: 13, opacity: 0.6, marginTop: 4 }}>kcal / day</span>
+                  <span style={{ display: "block", fontSize: 13, opacity: 0.7, marginTop: 4 }}>kcal / day</span>
                 </div>
                 <div style={{ display: "flex", gap: 10, marginBottom: 20 }}>
                   {[{ l: "BMR", v: r.bmr, t: "At rest" }, { l: "TDEE", v: r.tdee, t: "With activity" }].map(c => (
-                    <div key={c.l} style={{ flex: 1, borderRadius: 0, padding: "16px 12px", textAlign: "center", border: "2px solid " + TXT, background: CARD }}>
+                    <div key={c.l} style={{ flex: 1, borderRadius: 12, padding: "16px 12px", textAlign: "center", border: "1px solid var(--border)", background: "var(--input-bg)" }}>
                       <span style={{ display: "block", fontSize: 10, fontWeight: 700, color: MUTE, letterSpacing: "2px", textTransform: "uppercase", marginBottom: 4 }}>{c.l}</span>
                       <span style={{ display: "block", fontSize: 26, fontWeight: 900, letterSpacing: "-1px" }}><AN value={c.v} /></span>
                       <span style={{ display: "block", fontSize: 11, color: MUTE, marginTop: 3 }}>{c.t}</span>
@@ -480,8 +516,8 @@ export default function App() {
                 </div>
                 <div style={{ display: "flex", gap: 8 }}>
                   {[{ l: "Protein", g: r.pG, p: prot, c: PROT_COLOR }, { l: "Carbs", g: r.cG, p: carb, c: CARB_COLOR }, { l: "Fat", g: r.fG, p: fatP, c: FAT_COLOR }].map(m => (
-                    <div key={m.l} style={{ flex: 1, borderRadius: 0, padding: "14px 8px", textAlign: "center", border: "2px solid " + TXT, background: CARD }}>
-                      <div style={{ width: 8, height: 8, borderRadius: 0, background: m.c, margin: "0 auto 6px" }} />
+                    <div key={m.l} style={{ flex: 1, borderRadius: 12, padding: "14px 8px", textAlign: "center", border: "1px solid var(--border)", background: CARD }}>
+                      <div style={{ width: 8, height: 8, borderRadius: "50%", background: m.c, margin: "0 auto 6px" }} />
                       <span style={{ display: "block", fontSize: 11, fontWeight: 700, color: MUTE }}>{m.l}</span>
                       <span style={{ display: "block", fontSize: 24, fontWeight: 900, letterSpacing: "-0.8px", lineHeight: 1.1 }}><AN value={m.g} />g</span>
                       <span style={{ display: "block", fontSize: 10, color: MUTE }}>{m.p}%</span>
@@ -503,7 +539,7 @@ export default function App() {
                 <div className="tabs-scroll">
                   <div style={{ display: "flex", gap: 6, width: "max-content" }}>
                     {availableCats.map(cat => (
-                      <button key={cat.id} onClick={() => setSelectedCat(selectedCat === cat.id ? null : cat.id)} style={{ padding: "10px 14px", minHeight: 44, borderRadius: 0, border: "2px solid " + TXT, fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: HEADER_FONT, whiteSpace: "nowrap", background: selectedCat === cat.id ? ACC : CARD, color: selectedCat === cat.id ? WHITE : TXT, transition: "all 0.1s ease", boxShadow: selectedCat === cat.id ? "none" : "3px 3px 0px 0px " + TXT }}>{cat.label}</button>
+                      <button key={cat.id} onClick={() => setSelectedCat(selectedCat === cat.id ? null : cat.id)} style={{ padding: "10px 14px", minHeight: 44, borderRadius: 10, border: "1px solid var(--border)", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: HEADER_FONT, whiteSpace: "nowrap", background: selectedCat === cat.id ? ACC : CARD, color: selectedCat === cat.id ? WHITE : TXT, transition: "all 0.2s ease" }}>{cat.label}</button>
                     ))}
                   </div>
                 </div>
@@ -512,7 +548,7 @@ export default function App() {
             <div style={{ marginBottom: 14 }}>
               <span style={labelStyle}>Sort By</span>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <select value={sortBy} onChange={e => setSortBy(e.target.value)} style={{ padding: "12px 8px", minHeight: 44, borderRadius: 0, border: "2px solid " + TXT, background: CARD, color: TXT, fontSize: 13, fontFamily: NUM_FONT, fontWeight: 600, outline: "none", cursor: "pointer", appearance: "none", WebkitAppearance: "none", flex: 1 }}>
+                <select value={sortBy} onChange={e => setSortBy(e.target.value)} style={{ ...inputStyle, flex: 1, background:CARD }}>
                   <option value="popular_desc">Most Popular</option>
                   <option value="popular_asc">Least Popular</option>
                   <option value="az">A → Z</option>
@@ -528,7 +564,7 @@ export default function App() {
               </div>
             </div>
             <div style={{ marginBottom: 12, position: "relative" }}>
-              <input type="text" value={foodSearch} onChange={e => setFoodSearch(e.target.value)} placeholder="Search foods… (e.g. salmon, rice, yogurt)" style={{ ...inputStyle, paddingLeft: 42, fontWeight: 500 }} />
+              <input type="text" value={foodSearch} onChange={e => setFoodSearch(e.target.value)} placeholder="Search foods… (e.g. salmon, rice, yogurt)" style={{ ...inputStyle, paddingLeft: 42, background:CARD }} />
               <span style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", fontSize: 16, color: MUTE, pointerEvents: "none" }}>🔍</span>
               {foodSearch.length > 0 && <button onClick={() => setFoodSearch("")} style={{ position: "absolute", right: 8, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: MUTE, fontSize: 18, lineHeight: 1, padding: "8px", minWidth: 44, minHeight: 44, display: "flex", alignItems: "center", justifyContent: "center" }}>×</button>}
             </div>
@@ -537,14 +573,14 @@ export default function App() {
             {!foodsLoading && groupedFoods.length === 0 && <p style={{ fontSize: 14, color: MUTE, textAlign: "center", padding: "24px 0", margin: 0 }}>No foods match your filters. Try adjusting your selection.</p>}
             {!foodsLoading && groupedFoods.map(group => (
               <div key={group.label}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: group.isFavs ? ACC : MUTE, letterSpacing: "2px", textTransform: "uppercase", margin: "20px 0 10px", paddingBottom: 6, borderBottom: `1px solid ${group.isFavs ? ACC : "#E5E7EB"}`, display: "flex", alignItems: "center", gap: 6 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: group.isFavs ? ACC : MUTE, letterSpacing: "2px", textTransform: "uppercase", margin: "20px 0 10px", paddingBottom: 6, borderBottom: `1px solid var(--border)`, display: "flex", alignItems: "center", gap: 6 }}>
                   {group.isFavs && <span>★</span>}{group.label}
                 </div>
                 {group.foods.map(food => {
                   const selected = meal[food.id] !== undefined;
                   const g = meal[food.id] || 0;
                   return (
-                    <div key={food.id} style={{ borderRadius: 0, padding: "12px 16px", marginBottom: 8, background: CARD, transition: "all 0.15s", border: selected ? "2px solid " + ACC : "1px solid #E5E7EB" }}>
+                    <div key={food.id} style={{ borderRadius: 12, padding: "12px 16px", marginBottom: 8, background: CARD, transition: "all 0.2s ease", border: selected ? "2px solid " + ACC : "1px solid var(--border)", boxShadow: selected ? "var(--shadow)" : "none" }}>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer" }} onClick={() => toggleFood(food.id, food)}>
                         <div style={{ flex: 1, minWidth: 0 }}>
                           {macroFilter === "any" ? (
@@ -571,7 +607,7 @@ export default function App() {
                             </>
                           )}
                         </div>
-                        <div style={{ width: 28, height: 28, borderRadius: 0, background: selected ? ACC : CARD, color: selected ? WHITE : MUTE, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 16, flexShrink: 0, border: "2px solid " + TXT }}>{selected ? "✓" : "+"}</div>
+                        <div style={{ width: 28, height: 28, borderRadius: 8, background: selected ? ACC : "var(--input-bg)", color: selected ? WHITE : MUTE, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 16, flexShrink: 0 }}>{selected ? "✓" : "+"}</div>
                       </div>
                       {selected && (() => {
                         const currentUnit = mealUnits[food.id] || "grams";
@@ -582,8 +618,8 @@ export default function App() {
                         return (
                           <div style={{ marginTop: 12 }}>
                             <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                              <input type="number" value={qty} onChange={e => setGrams(food.id, e.target.value)} min="0" step="0.5" style={{ ...inputStyle, width: 80, padding: "10px 8px", fontSize: 16, textAlign: "center", flexShrink: 0 }} />
-                              <select value={currentUnit} onChange={e => setFoodUnit(food.id, e.target.value)} style={{ flex: 1, padding: "12px 8px", minHeight: 44, borderRadius: 0, border: "2px solid " + TXT, background: CARD, color: TXT, fontSize: 13, fontFamily: NUM_FONT, fontWeight: 600, outline: "none", cursor: "pointer", appearance: "none", WebkitAppearance: "none" }}>{unitOptions.map(u => <option key={u} value={u}>{u}</option>)}</select>
+                              <input type="number" value={qty} onChange={e => setGrams(food.id, e.target.value)} min="0" step="0.5" style={{ ...inputStyle, width: 80, padding: "10px 8px", fontSize: 16, textAlign: "center", flexShrink: 0, background:CARD }} />
+                              <select value={currentUnit} onChange={e => setFoodUnit(food.id, e.target.value)} style={{ ...inputStyle, flex: 1, padding: "10px 8px", minHeight: 44, fontSize: 13, background:CARD }}>{unitOptions.map(u => <option key={u} value={u}>{u}</option>)}</select>
                             </div>
                             {currentUnit !== "grams" && <p style={{ margin: "6px 0 0", fontSize: 11, color: MUTE }}>= <strong style={{ color: TXT }}>{Math.round(grams)}g</strong> total</p>}
                             {qty > 0 && (
@@ -594,22 +630,6 @@ export default function App() {
                                 <span style={{ fontSize: 12, color: MUTE, fontFamily: NUM_FONT }}><b style={{ color: TXT }}>{Math.round(food.per100.fat * grams / 100 * 10) / 10}g</b> <span style={{ color: FAT_COLOR, fontWeight: 700 }}>F</span></span>
                               </div>
                             )}
-                          </div>
-                        );
-                      })()}
-                      {selected && (() => {
-                        const currentUnit = mealUnits[food.id] || "grams";
-                        const gramsPerUnit = resolveGrams(food, currentUnit);
-                        const qty = meal[food.id] || 0;
-                        const grams = qty * gramsPerUnit;
-                        if (grams <= 0) return null;
-                        return (
-                          <div style={{ marginTop: 10, display: "flex", flexWrap: "wrap", gap: 6 }}>
-                            {MICRO_KEYS.filter(k => food.per100[k] > 0).map(k => {
-                              const val = Math.round(food.per100[k] * grams / 100 * 10) / 10;
-                              const pct = Math.round((val / rda[k]) * 100);
-                              return <span key={k} style={{ fontSize: 10, padding: "3px 7px", borderRadius: 0, background: pct >= 20 ? "#ddd" : "#e8e8e8", color: pct >= 20 ? ACC : MUTE, fontWeight: 600, border: "1px solid " + MUTE }}>{MICRO_LABELS[k].split(" ").pop()} {val}{MICRO_UNITS[k]} ({pct}%)</span>;
-                            })}
                           </div>
                         );
                       })()}
@@ -632,7 +652,7 @@ export default function App() {
                   const grams = qty * gramsPerUnit;
                   const display = currentUnit === "grams" ? `${grams}g` : `${qty} ${currentUnit} (${Math.round(grams)}g)`;
                   return (
-                    <div key={id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 0", borderBottom: "1px solid #E5E7EB" }}>
+                    <div key={id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 0", borderBottom: "1px solid var(--border)" }}>
                       <span style={{ fontSize: 13, fontWeight: 600 }}>{food.name}</span>
                       <span style={{ fontSize: 13, color: MUTE, fontFamily: NUM_FONT }}>{display} · {Math.round(food.per100.cal * grams / 100)} cal</span>
                     </div>
@@ -646,7 +666,7 @@ export default function App() {
                   { l: "Carbs", v: Math.round(mt.carbs), u: "g", target: r?.cG },
                   { l: "Fat", v: Math.round(mt.fat), u: "g", target: r?.fG },
                 ].map(m => (
-                  <div key={m.l} style={{ flex: 1, borderRadius: 0, padding: "14px 6px", textAlign: "center", border: "2px solid " + TXT, background: CARD }}>
+                  <div key={m.l} style={{ flex: 1, borderRadius: 12, padding: "14px 6px", textAlign: "center", border: "1px solid var(--border)", background: "var(--input-bg)" }}>
                     <span style={{ display: "block", fontSize: 10, fontWeight: 700, color: MUTE, letterSpacing: "2px", textTransform: "uppercase" }}>{m.l}</span>
                     <span style={{ display: "block", fontSize: 20, fontWeight: 900, marginTop: 4, letterSpacing: "-0.5px", fontFamily: NUM_FONT }}>{m.v}</span>
                     <span style={{ display: "block", fontSize: 10, color: MUTE }}>{m.u}</span>
@@ -662,21 +682,21 @@ export default function App() {
                   <div key={k} style={{ marginBottom: 12 }}>
                     <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 4 }}>
                       <span style={{ fontWeight: 700 }}>{MICRO_LABELS[k]}</span>
-                      <span style={{ color: pct >= 100 ? "#059669" : pct >= 50 ? MUTE : "#DC2626", fontWeight: 700 }}>{Math.round(mt[k] * 10) / 10}{MICRO_UNITS[k]} · {pct}%</span>
+                      <span style={{ color: pct >= 100 ? "#10B981" : pct >= 50 ? MUTE : "#EF4444", fontWeight: 700 }}>{Math.round(mt[k] * 10) / 10}{MICRO_UNITS[k]} · {pct}%</span>
                     </div>
-                    <div style={{ height: 8, borderRadius: 0, background: "#E5E7EB", border: "1px solid #D1D5DB" }}>
-                      <div style={{ height: "100%", width: w + "%", borderRadius: 0, background: pct >= 100 ? "#059669" : pct >= 50 ? ACC : "#DC2626", transition: "width 0.4s ease" }} />
+                    <div style={{ height: 8, borderRadius: 10, background: "var(--border)", overflow: "hidden" }}>
+                      <div style={{ height: "100%", width: w + "%", background: pct >= 100 ? "#10B981" : pct >= 50 ? ACC : "#EF4444", transition: "width 0.4s ease" }} />
                     </div>
                   </div>
                 );
               })}
-              <button onClick={() => setMeal({})} style={{ width: "100%", padding: "14px", minHeight: 44, borderRadius: 0, border: "2px solid " + TXT, background: CARD, color: TXT, fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: HEADER_FONT, marginTop: 10, boxShadow: "4px 4px 0px 0px " + TXT }}>Clear Meal</button>
+              <button onClick={() => setMeal({})} style={{ width: "100%", padding: "14px", minHeight: 44, borderRadius: 12, border: "none", background: ACC, color: WHITE, fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: HEADER_FONT, marginTop: 10, boxShadow: "var(--shadow)" }}>Clear Meal</button>
             </div>
           )}
         </div>
       </div>
 
-      <footer style={{ textAlign: "center", padding: 20, fontSize: 11, color: MUTE, fontFamily: HEADER_FONT }}>macrocalculatorfree.com · No ads · No data collected · Always free</footer>
+      <footer style={{ textAlign: "center", padding: 40, fontSize: 12, color: MUTE, fontFamily: HEADER_FONT, fontWeight: 500 }}>macrocalculatorfree.com · No ads · No data collected · Always free</footer>
     </div>
   );
 }
@@ -684,20 +704,20 @@ export default function App() {
 /* ── helpers ── */
 function SH({ n, t }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
-      <span style={{ fontWeight: 700, fontSize: 14, color: TXT, fontFamily: NUM_FONT, flexShrink: 0 }}>[{n}]</span>
-      <h2 style={{ margin: 0, fontSize: 16, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px", fontFamily: HEADER_FONT }}>{t}</h2>
+    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
+      <span style={{ display:"flex", alignItems:"center", justifyContent:"center", width:24, height:24, borderRadius:6, background:ACC, color:WHITE, fontWeight: 800, fontSize: 12, fontFamily: NUM_FONT, flexShrink: 0 }}>{n}</span>
+      <h2 style={{ margin: 0, fontSize: 18, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.5px", fontFamily: HEADER_FONT }}>{t}</h2>
     </div>
   );
 }
 function R({ l, children }) {
-  return <div style={{ marginBottom: 20 }}><span style={{ display: "block", fontSize: 11, fontWeight: 700, color: MUTE, letterSpacing: "2px", textTransform: "uppercase", marginBottom: 8 }}>{l}</span>{children}</div>;
+  return <div style={{ marginBottom: 20 }}><span style={{ display: "block", fontSize: 11, fontWeight: 700, color: MUTE, letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 8 }}>{l}</span>{children}</div>;
 }
 function Tog({ opts, v, s }) {
   return (
-    <div style={{ display: "flex", border: "2px solid " + TXT, borderRadius: 0 }}>
-      {opts.map((o, i) => (
-        <button key={o.id} onClick={() => s(o.id)} style={{ flex: 1, padding: "10px 8px", minHeight: 44, borderRadius: 0, border: "none", borderRight: i < opts.length - 1 ? "2px solid " + TXT : "none", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: HEADER_FONT, transition: "all 0.1s ease", background: v === o.id ? ACC : "transparent", color: v === o.id ? WHITE : TXT }}>{o.l}</button>
+    <div style={{ display: "flex", background: "var(--input-bg)", padding: 4, borderRadius: 12, border: "1px solid var(--border)" }}>
+      {opts.map((o) => (
+        <button key={o.id} onClick={() => s(o.id)} style={{ flex: 1, padding: "8px 4px", minHeight: 36, borderRadius: 8, border: "none", fontSize: 13, fontWeight: 700, cursor: "pointer", transition: "all 0.2s ease", background: v === o.id ? CARD : "transparent", color: v === o.id ? ACC : MUTE, boxShadow: v === o.id ? "var(--shadow)" : "none" }}>{o.l}</button>
       ))}
     </div>
   );

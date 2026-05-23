@@ -137,6 +137,8 @@ export default function App() {
   const [foodsData, setFoodsData] = useState(null);
   const [foodsLoading, setFoodsLoading] = useState(true);
   const [foodSearch, setFoodSearch] = useState("");
+  const [browseMode, setBrowseMode] = useState("category"); // "category" | "macro"
+  const [macroTab,   setMacroTab]   = useState("protein");  // "protein" | "carbs" | "fat"
 
   /* ── localStorage: restore on mount ── */
   useEffect(() => {
@@ -196,14 +198,33 @@ export default function App() {
 
   const showSearch = foodSearch.length >= 2;
 
+  /* ── Macro browse: filter → sort → group by category ── */
+  const macroFoods = useMemo(() => {
+    if (!allFoods.length) return [];
+    const key = macroTab === "carbs" ? "carbs" : macroTab === "fat" ? "fat" : "protein";
+    const min = macroTab === "carbs" ? 5 : 2;
+    const sorted = allFoods
+      .filter(f => (f.per100[key] || 0) >= min)
+      .sort((a, b) => (b.per100[key] || 0) - (a.per100[key] || 0));
+    const groups = new Map();
+    sorted.forEach(f => {
+      const lbl = f.catLabel || "Other";
+      if (!groups.has(lbl)) groups.set(lbl, []);
+      groups.get(lbl).push(f);
+    });
+    return [...groups.entries()]; // [[catLabel, [foods…]], …]
+  }, [allFoods, macroTab]);
+
   /* ── Foods shown in the current view ── */
   const displayFoods = showSearch
     ? searchResults
-    : foodsData?.categories[foodTab]?.items?.map(item => ({
-        ...item,
-        catKey: foodTab,
-        catLabel: foodsData?.categories[foodTab]?.label,
-      })) ?? [];
+    : browseMode === "category"
+      ? foodsData?.categories[foodTab]?.items?.map(item => ({
+          ...item,
+          catKey: foodTab,
+          catLabel: foodsData?.categories[foodTab]?.label,
+        })) ?? []
+      : []; // macro mode list built separately
 
   const needsBF = FORMULAS.find(f => f.id === formula).needsBF;
 
@@ -428,8 +449,21 @@ export default function App() {
             )}
           </div>
 
-          {/* ── Category tabs (horizontal scroll) ── */}
+          {/* ── Browse mode toggle ── */}
           {!showSearch && (
+            <div style={{ display:"flex", borderRadius:14, padding:3, background:CARD, marginBottom:16, ...neuDn }}>
+              {[{id:"category",l:"Browse by Category"},{id:"macro",l:"Browse by Macro"}].map(o => (
+                <button
+                  key={o.id}
+                  onClick={() => setBrowseMode(o.id)}
+                  style={{ flex:1, padding:"10px 8px", minHeight:44, borderRadius:11, border:"none", fontSize:12, fontWeight:700, cursor:"pointer", fontFamily:"inherit", transition:"all 0.15s ease", background:browseMode===o.id?ACC:"transparent", color:browseMode===o.id?WHITE:MUTE }}
+                >{o.l}</button>
+              ))}
+            </div>
+          )}
+
+          {/* ── Category tabs (horizontal scroll) ── */}
+          {!showSearch && browseMode === "category" && (
             <div className="tabs-scroll">
               <div style={{ display:"flex", gap:6, width:"max-content" }}>
                 {CATEGORIES.map(cat => (
@@ -449,6 +483,19 @@ export default function App() {
             </div>
           )}
 
+          {/* ── Macro tabs (Protein / Carbs / Fat) ── */}
+          {!showSearch && browseMode === "macro" && (
+            <div style={{ display:"flex", gap:8, marginBottom:16 }}>
+              {[{id:"protein",l:"Protein"},{id:"carbs",l:"Carbs"},{id:"fat",l:"Fat"}].map(t => (
+                <button
+                  key={t.id}
+                  onClick={() => setMacroTab(t.id)}
+                  style={{ flex:1, padding:"12px 8px", minHeight:44, borderRadius:14, border:"none", fontSize:13, fontWeight:700, cursor:"pointer", fontFamily:"inherit", transition:"all 0.15s ease", background:macroTab===t.id?ACC:CARD, color:macroTab===t.id?WHITE:MUTE, ...(macroTab===t.id?{boxShadow:"none"}:neuSm) }}
+                >{t.l}</button>
+              ))}
+            </div>
+          )}
+
           {/* ── Search header ── */}
           {showSearch && (
             <p style={{fontSize:12,color:MUTE,marginBottom:12}}>
@@ -457,68 +504,129 @@ export default function App() {
           )}
 
           {/* ── Loading state ── */}
-          {foodsLoading ? (
+          {foodsLoading && (
             <div style={{textAlign:"center",padding:"36px 16px",color:MUTE}}>
               <div style={{fontSize:28,marginBottom:10}}>⏳</div>
               <p style={{margin:0,fontSize:14}}>Loading food database…</p>
             </div>
-          ) : (
-            /* ── Food list ── */
-            displayFoods.map(food => {
-              const selected = meal[food.id] !== undefined;
-              const g = meal[food.id] || 0;
-              return (
-                <div key={food.id} style={{ borderRadius: 16, padding: "14px 16px", marginBottom: 10, background: CARD, transition: "all 0.2s", ...(selected ? {...neuDn, outline: "2px solid "+ACC} : neuSm) }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer" }} onClick={() => toggleFood(food.id, 100)}>
-                    <div>
-                      <div style={{ display:"flex", alignItems:"center", gap:8 }}>
-                        <span style={{ fontSize: 14, fontWeight: 700 }}>{food.name}</span>
-                        {showSearch && food.catLabel && (
-                          <span style={{ fontSize: 10, padding:"2px 7px", borderRadius:10, background:"#e4e4e7", color:MUTE, fontWeight:600 }}>{food.catLabel}</span>
-                        )}
-                      </div>
-                      <div style={{ display: "flex", gap: 12, marginTop: 4, flexWrap: "wrap" }}>
-                        <span style={{ fontSize: 11, color: MUTE }}><b style={{color:TXT}}>{food.per100.cal}</b> cal</span>
-                        <span style={{ fontSize: 11, color: MUTE }}><b style={{color:TXT}}>{food.per100.protein}g</b> P</span>
-                        <span style={{ fontSize: 11, color: MUTE }}><b style={{color:TXT}}>{food.per100.carbs}g</b> C</span>
-                        <span style={{ fontSize: 11, color: MUTE }}><b style={{color:TXT}}>{food.per100.fat}g</b> F</span>
-                        <span style={{ fontSize: 10, color: MUTE }}>per 100g</span>
-                      </div>
+          )}
+
+          {/* ── Category / search food list ── */}
+          {!foodsLoading && (browseMode === "category" || showSearch) && displayFoods.map(food => {
+            const selected = meal[food.id] !== undefined;
+            const g = meal[food.id] || 0;
+            return (
+              <div key={food.id} style={{ borderRadius: 16, padding: "14px 16px", marginBottom: 10, background: CARD, transition: "all 0.2s", ...(selected ? {...neuDn, outline: "2px solid "+ACC} : neuSm) }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer" }} onClick={() => toggleFood(food.id, 100)}>
+                  <div>
+                    <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                      <span style={{ fontSize: 14, fontWeight: 700 }}>{food.name}</span>
+                      {showSearch && food.catLabel && (
+                        <span style={{ fontSize: 10, padding:"2px 7px", borderRadius:10, background:"#e4e4e7", color:MUTE, fontWeight:600 }}>{food.catLabel}</span>
+                      )}
                     </div>
-                    <div style={{ width: 28, height: 28, borderRadius: "50%", background: selected ? ACC : CARD, color: selected ? WHITE : MUTE, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 16, flexShrink: 0, ...(selected ? {} : neuSm) }}>
-                      {selected ? "✓" : "+"}
+                    <div style={{ display: "flex", gap: 12, marginTop: 4, flexWrap: "wrap" }}>
+                      <span style={{ fontSize: 11, color: MUTE }}><b style={{color:TXT}}>{food.per100.cal}</b> cal</span>
+                      <span style={{ fontSize: 11, color: MUTE }}><b style={{color:TXT}}>{food.per100.protein}g</b> P</span>
+                      <span style={{ fontSize: 11, color: MUTE }}><b style={{color:TXT}}>{food.per100.carbs}g</b> C</span>
+                      <span style={{ fontSize: 11, color: MUTE }}><b style={{color:TXT}}>{food.per100.fat}g</b> F</span>
+                      <span style={{ fontSize: 10, color: MUTE }}>per 100g</span>
                     </div>
                   </div>
-                  {selected && (
-                    <div style={{ marginTop: 12, display: "flex", alignItems: "center", gap: 10 }}>
-                      <span style={{ fontSize: 12, fontWeight: 700, color: MUTE, flexShrink: 0 }}>Grams:</span>
-                      <input type="number" value={g} onChange={e => setGrams(food.id, e.target.value)} style={{ ...inputStyle, width: 90, padding: "10px 12px", fontSize: 16, textAlign: "center" }} />
-                      <div style={{ fontSize: 12, color: MUTE, flexWrap: "wrap", display: "flex", gap: 8 }}>
-                        <span><b style={{color:TXT}}>{Math.round(food.per100.cal*g/100)}</b> cal</span>
-                        <span><b style={{color:TXT}}>{Math.round(food.per100.protein*g/100*10)/10}g</b> P</span>
-                        <span><b style={{color:TXT}}>{Math.round(food.per100.carbs*g/100*10)/10}g</b> C</span>
-                        <span><b style={{color:TXT}}>{Math.round(food.per100.fat*g/100*10)/10}g</b> F</span>
+                  <div style={{ width: 28, height: 28, borderRadius: "50%", background: selected ? ACC : CARD, color: selected ? WHITE : MUTE, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 16, flexShrink: 0, ...(selected ? {} : neuSm) }}>
+                    {selected ? "✓" : "+"}
+                  </div>
+                </div>
+                {selected && (
+                  <div style={{ marginTop: 12, display: "flex", alignItems: "center", gap: 10 }}>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: MUTE, flexShrink: 0 }}>Grams:</span>
+                    <input type="number" value={g} onChange={e => setGrams(food.id, e.target.value)} style={{ ...inputStyle, width: 90, padding: "10px 12px", fontSize: 16, textAlign: "center" }} />
+                    <div style={{ fontSize: 12, color: MUTE, flexWrap: "wrap", display: "flex", gap: 8 }}>
+                      <span><b style={{color:TXT}}>{Math.round(food.per100.cal*g/100)}</b> cal</span>
+                      <span><b style={{color:TXT}}>{Math.round(food.per100.protein*g/100*10)/10}g</b> P</span>
+                      <span><b style={{color:TXT}}>{Math.round(food.per100.carbs*g/100*10)/10}g</b> C</span>
+                      <span><b style={{color:TXT}}>{Math.round(food.per100.fat*g/100*10)/10}g</b> F</span>
+                    </div>
+                  </div>
+                )}
+                {selected && g > 0 && (
+                  <div style={{ marginTop: 10, display: "flex", flexWrap: "wrap", gap: 6 }}>
+                    {MICRO_KEYS.filter(k => food.per100[k] > 0).map(k => {
+                      const val = Math.round(food.per100[k] * g / 100 * 10) / 10;
+                      const pct = Math.round((val / rda[k]) * 100);
+                      return (
+                        <span key={k} style={{ fontSize: 10, padding: "3px 7px", borderRadius: 8, background: pct >= 20 ? "#ddd" : "#e8e8e8", color: pct >= 20 ? ACC : MUTE, fontWeight: 600 }}>
+                          {MICRO_LABELS[k].split(" ").pop()} {val}{MICRO_UNITS[k]} ({pct}%)
+                        </span>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+
+          {/* ── Macro food list — grouped by category ── */}
+          {!foodsLoading && browseMode === "macro" && !showSearch && macroFoods.map(([catLabel, foods]) => (
+            <div key={catLabel}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: MUTE, letterSpacing: "2px", textTransform: "uppercase", margin: "20px 0 10px", paddingBottom: 6, borderBottom: "1px solid #e0e0dc" }}>
+                {catLabel}
+              </div>
+              {foods.map(food => {
+                const selected = meal[food.id] !== undefined;
+                const g = meal[food.id] || 0;
+                const macroKey = macroTab === "carbs" ? "carbs" : macroTab === "fat" ? "fat" : "protein";
+                const featuredVal = food.per100[macroKey];
+                return (
+                  <div key={food.id} style={{ borderRadius: 16, padding: "14px 16px", marginBottom: 10, background: CARD, transition: "all 0.2s", ...(selected ? {...neuDn, outline: "2px solid "+ACC} : neuSm) }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer" }} onClick={() => toggleFood(food.id, 100)}>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <span style={{ fontSize: 14, fontWeight: 700 }}>{food.name}</span>
+                        <div style={{ display: "flex", alignItems: "baseline", gap: 5, marginTop: 4 }}>
+                          <span style={{ fontSize: 20, fontWeight: 900, color: TXT, fontFamily: NUM_FONT, lineHeight: 1 }}>{featuredVal}g</span>
+                          <span style={{ fontSize: 12, color: MUTE }}>{macroTab} per 100g</span>
+                        </div>
+                        <div style={{ display: "flex", gap: 10, marginTop: 3, flexWrap: "wrap" }}>
+                          {macroTab !== "protein" && <span style={{ fontSize: 11, color: MUTE }}><b style={{color:TXT}}>{food.per100.protein}g</b> P</span>}
+                          {macroTab !== "carbs"   && <span style={{ fontSize: 11, color: MUTE }}><b style={{color:TXT}}>{food.per100.carbs}g</b> C</span>}
+                          {macroTab !== "fat"     && <span style={{ fontSize: 11, color: MUTE }}><b style={{color:TXT}}>{food.per100.fat}g</b> F</span>}
+                          <span style={{ fontSize: 11, color: MUTE }}><b style={{color:TXT}}>{food.per100.cal}</b> cal</span>
+                        </div>
+                      </div>
+                      <div style={{ width: 28, height: 28, borderRadius: "50%", background: selected ? ACC : CARD, color: selected ? WHITE : MUTE, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 16, flexShrink: 0, ...(selected ? {} : neuSm) }}>
+                        {selected ? "✓" : "+"}
                       </div>
                     </div>
-                  )}
-                  {/* key micros when selected */}
-                  {selected && g > 0 && (
-                    <div style={{ marginTop: 10, display: "flex", flexWrap: "wrap", gap: 6 }}>
-                      {MICRO_KEYS.filter(k => food.per100[k] > 0).map(k => {
-                        const val = Math.round(food.per100[k] * g / 100 * 10) / 10;
-                        const pct = Math.round((val / rda[k]) * 100);
-                        return (
-                          <span key={k} style={{ fontSize: 10, padding: "3px 7px", borderRadius: 8, background: pct >= 20 ? "#ddd" : "#e8e8e8", color: pct >= 20 ? ACC : MUTE, fontWeight: 600 }}>
-                            {MICRO_LABELS[k].split(" ").pop()} {val}{MICRO_UNITS[k]} ({pct}%)
-                          </span>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              );
-            })
-          )}
+                    {selected && (
+                      <div style={{ marginTop: 12, display: "flex", alignItems: "center", gap: 10 }}>
+                        <span style={{ fontSize: 12, fontWeight: 700, color: MUTE, flexShrink: 0 }}>Grams:</span>
+                        <input type="number" value={g} onChange={e => setGrams(food.id, e.target.value)} style={{ ...inputStyle, width: 90, padding: "10px 12px", fontSize: 16, textAlign: "center" }} />
+                        <div style={{ fontSize: 12, color: MUTE, flexWrap: "wrap", display: "flex", gap: 8 }}>
+                          <span><b style={{color:TXT}}>{Math.round(food.per100.cal*g/100)}</b> cal</span>
+                          <span><b style={{color:TXT}}>{Math.round(food.per100.protein*g/100*10)/10}g</b> P</span>
+                          <span><b style={{color:TXT}}>{Math.round(food.per100.carbs*g/100*10)/10}g</b> C</span>
+                          <span><b style={{color:TXT}}>{Math.round(food.per100.fat*g/100*10)/10}g</b> F</span>
+                        </div>
+                      </div>
+                    )}
+                    {selected && g > 0 && (
+                      <div style={{ marginTop: 10, display: "flex", flexWrap: "wrap", gap: 6 }}>
+                        {MICRO_KEYS.filter(k => food.per100[k] > 0).map(k => {
+                          const val = Math.round(food.per100[k] * g / 100 * 10) / 10;
+                          const pct = Math.round((val / rda[k]) * 100);
+                          return (
+                            <span key={k} style={{ fontSize: 10, padding: "3px 7px", borderRadius: 8, background: pct >= 20 ? "#ddd" : "#e8e8e8", color: pct >= 20 ? ACC : MUTE, fontWeight: 600 }}>
+                              {MICRO_LABELS[k].split(" ").pop()} {val}{MICRO_UNITS[k]} ({pct}%)
+                            </span>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          ))}
         </div>
 
         {/* ── 5. MEAL TOTALS ── */}

@@ -729,9 +729,17 @@ export default function App() {
               </button>
               <button 
                 onClick={() => {
-                  window.location.href = 'mailto:gavishah21@gmail.com?subject=Macro Calculator Feedback&body=' + encodeURIComponent(feedbackText);
-                  setShowFeedback(false);
-                  setFeedbackText("");
+                  fetch('https://submit-form.com/YOUR_FORMSPARK_FORM_ID', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: feedbackText }),
+                  })
+                  .then(() => {
+                    alert('Thank you for your feedback!');
+                    setShowFeedback(false);
+                    setFeedbackText("");
+                  })
+                  .catch(() => alert('Network error. Please try again later.'));
                 }}
                 style={{ flex: 2, padding: "16px", borderRadius: 14, border: "none", background: ACC, color: WHITE, fontWeight: 900, cursor: "pointer", boxShadow: "0 8px 24px rgba(0,0,0,0.15)" }}
               >
